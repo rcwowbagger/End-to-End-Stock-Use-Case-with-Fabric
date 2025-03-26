@@ -35,9 +35,9 @@ For "training purposes, and time limit" we have made some adjustments to the arc
 Stock trend and trading volume analysis should be done in Power BI. The data should be stored in a Lakehouse and the meta data in a SQL Server database. The data should be refreshed regularly and the list of collected stocks should be easily changeable by a business user. The end-to-end log information should be kept for more than 30 days. The solution should be implemented only using Microsoft Fabric services.
 
 
-![Power BI report 1](png\Slide4.PNG)
+![Power BI report 1](./PNG/Slide4.PNG)
 Stockprice and trading volume over time
-![Power BI report 2](png\Slide5.PNG)
+![Power BI report 2](./PNG/Slide5.PNG)
 Stockprice delta changes over time
 
 
@@ -57,7 +57,7 @@ The fabric pipelies are triggered by a schedule, but can also be triggered manua
 
 <br>
 
-![Architectural Overview](png\Slide7.PNG)
+![Architectural Overview](./PNG/Slide7.PNG)
 
 ## Implementation Details
 
@@ -65,7 +65,7 @@ The fabric pipelies are triggered by a schedule, but can also be triggered manua
 
 The Fabric Pipelines are used to orchestrate the workflow. The configuration of the pipeline is done outside of the pipeline. <br>
 
-![Pipeline configuration](png\Slide8.PNG)
+![Pipeline configuration](./PNG/Slide8.PNG)
 
 Key concepts in the implementation:
 - Configuration of the pipeline is done outside of the pipeline
@@ -109,13 +109,13 @@ The StockMetaData database contains just two relevant tables:
 
 The Business User can easily change the list of companies by updating the TransferObject table. The TransferLog table contains the log information of the pipeline runs. <br>
 
-![Pipeline configuration details](png\Slide10.PNG)
+![Pipeline configuration details](./PNG/Slide10.PNG)
 
 ###  Handle data load windows, restart ability
 The solution will fetch the stock details data in slices. It keeps track of the last fetched date and fetches the data from this date onwards. This way the pipeline can be restarted without any data loss. <br>
 The implemented pattern can be used for «all» incremental loads with an increasing scalar (e.g. date) attribute.
 
-![Sliding window concept](png\Slide11.PNG)
+![Sliding window concept](./PNG/Slide11.PNG)
 
 
 ###  StockMetaData – Stored Procedures
@@ -130,24 +130,24 @@ A few, quite simple stored procedures provided the required transfer logic.
   - Logs in the meta data database that an error occurred during the transfer for a specific company.
 
 
-![Stored proecdures call from pipeline](png\Slide12.PNG)
-![Stored proecdures call from pipeline, in action](png\Slide13.PNG)
+![Stored proecdures call from pipeline](./PNG/Slide12.PNG)
+![Stored proecdures call from pipeline, in action](./PNG/Slide13.PNG)
 
 
 The code is developed as a SQL database project.
 
-![Stored proecdures code details](png\Slide14.PNG)
+![Stored proecdures code details](./PNG/Slide14.PNG)
 
 
 ###  Eventhouse
 
-![Eventhouse](png\Slide15.PNG)
+![Eventhouse](./PNG/Slide15.PNG)
 
 ####  JSON Parsing, Update Policy and Materialized Views
 KQL is used to transform and clean the data (build the medallion architecture)
 
 
-![MedallionArchitecture](png\Slide16.PNG)
+![MedallionArchitecture](./PNG/Slide16.PNG)
 
 - Parse JSON
   - Define attributes and data types using KQL
@@ -161,20 +161,20 @@ KQL is used to transform and clean the data (build the medallion architecture)
 
 With a few lines of KQL we can parse the JSON data and build the data structure required for the Silver layer.
 
-![DevelopKQLParsingCode](png\Slide17.PNG)
+![DevelopKQLParsingCode](./PNG/Slide17.PNG)
 
 
 ###  Update Policy
 
 An update policy is used to automate the process of moving data from the Bronze layer to the Silver layer. In a frst step the code must be wrapped in a function. The function is then used in the update policy.
 
-![UpdatePolicy](png\Slide18.PNG)
+![UpdatePolicy](./PNG/Slide18.PNG)
 
 
 ###  Remove Duplicate Rows
 KQL functions arg_max()/take_any() and materialized-view are very helpful to remove duplicate rows.
 
-![RemoveDuplicateRows](png\Slide19.PNG)
+![RemoveDuplicateRows](./PNG/Slide19.PNG)
 
 - take_any() is used to remove duplicate rows if you are certain that the data is the same for all rows. 
 - arg_max() is used to remove duplicate rows if you would like to control which row is taken. In our case we are using the last ingested row.
@@ -184,21 +184,21 @@ KQL functions arg_max()/take_any() and materialized-view are very helpful to rem
 Reading the data from the REST API, transforming it into JSON and storing it in the Eventhouse is done in a Python notebook. The notebook is part of the pipeline and is triggered by the pipeline. 
  <br>
 
-![Notebook](png\Slide20.PNG)
+![Notebook](./PNG/Slide20.PNG)
 
 The notebook is embedded in the pipeline and it gets all the required parameters from the pipeline itself, getting the output from lookup activites. 
 <br>
 
-![Notebook](png\Slide21.PNG)
+![Notebook](./PNG/Slide21.PNG)
 
 
 The Python code is quite simple. It reads the data from the REST API, transforms it into JSON and stores it in the Eventhouse.
 
-![PythonCode](png\Slide22.PNG)
+![PythonCode](./PNG/Slide22.PNG)
 
 <br>
 
-![PythonCode](png\Slide23.PNG)
+![PythonCode](./PNG/Slide23.PNG)
 
 ###  Python Code – Some notes
 Very simple to pass parameter in and out
@@ -219,15 +219,15 @@ It’s not rocket science, but also not trivial as a few pitfalls can happen
 ###  Company Details Lakehouse
 Company details are stored in a Lakehouse. 
 
-![CompanyDetailsLakehouse](png\Slide25.PNG)
+![CompanyDetailsLakehouse](./PNG/Slide25.PNG)
 
 To make it accessible for the Eventhouse, a shortcut is created in Kusto. Kusto is also used to create a very simple version of an SCD2 dimension. If any attribute changes, a new record is created with the new attribute. 
 
-![CompanyDetailsShortcutAndSCD2](png\Slide26.PNG)
+![CompanyDetailsShortcutAndSCD2](./PNG/Slide26.PNG)
 
 The dimension is mirrored back to the Lakehouse.
 
-![CompanyDetailsMirror](png\Slide27.PNG)
+![CompanyDetailsMirror](./PNG/Slide27.PNG)
 
 
 
@@ -235,23 +235,23 @@ The dimension is mirrored back to the Lakehouse.
 
 In an IoT scenario, the data is coming in real-time and the user would like to see the data in real-time. Delta parquet is more optimized for big datasets. If only a lakehouse is used, this can lead to a performance issue by having a lot of small files that need to be optimized. The solution is to use a KQL database for the real-time data and a lakehouse provides a nice architecture to be able to store the data in a more optimized way.
 
-![PerformanceDilemma](png\Slide28.PNG)
+![PerformanceDilemma](./PNG/Slide28.PNG)
 
 <br>
 
 
-![PerformanceDilemma2](png\Slide29.PNG)
+![PerformanceDilemma2](./PNG/Slide29.PNG)
 
 <br>
 
-![PerformanceDilemma3](png\Slide30.PNG)
+![PerformanceDilemma3](./PNG/Slide30.PNG)
 
 
 ###  Data Access Facade
 
 The Rest API provides just data for a corresponding company and point in time. Very often, the user would like to see the data over time, e.g. changes between two points in time, absolute or relative. The data access facade is used to provide the data in a way that the user can easily access the data over time.
 
-![DataAccessFacade](png\Slide35.PNG)
+![DataAccessFacade](./PNG/Slide35.PNG)
 
 
 <br> 
@@ -265,21 +265,21 @@ In our example we are using series_fill_forward() to fill the gaps in the data. 
 - series_fill_const()
 Depending on the use case, the right function can be used to fill the gaps in the data.
 
-![DataAccessFacade](png\Slide36.PNG)
+![DataAccessFacade](./PNG/Slide36.PNG)
 
 <br>
 
 
-![DataAccessFacade](png\Slide37.PNG)
+![DataAccessFacade](./PNG/Slide37.PNG)
 
 The series_fill_xxx() is only a subset of the available functions. There are also functions available to calculate the distance between two points, to check if a point is in a circle or polygon, to densify the shape edges, ...
 
-![ADXFunctions](png\Slide39.PNG)
+![ADXFunctions](./PNG/Slide39.PNG)
 
 <br>
 
 
-![ADXFunctions](png\Slide40.PNG)
+![ADXFunctions](./PNG/Slide40.PNG)
 
 
 
@@ -297,22 +297,22 @@ Two helper Tables have been created to pass parameter directly to Kusto Query in
 - Param_BinSize
 - Param_Date
 
-![PowerBI](png\Slide42.PNG)
+![PowerBI](./PNG/Slide42.PNG)
 
 
 ###  Overview Page M fact_GetStock
 
 Details how to get data from the Eventhouse unsing the GetStock function and how to bind the parameters to the query.
 
-![PowerBI function call](png\Slide43.PNG)
+![PowerBI function call](./PNG/Slide43.PNG)
 
 Part 2:
 
-![PowerBI function call](png\Slide44.PNG)
+![PowerBI function call](./PNG/Slide44.PNG)
 
 Part 3:
 
-![PowerBI function call](png\Slide45.PNG)
+![PowerBI function call](./PNG/Slide45.PNG)
 
 
 
@@ -320,7 +320,7 @@ Part 3:
 Slicer functionality is limited if you bind a field to a parameter and force single selection. Search functionality in Slicer Visual not available neither. As workaround use “pre-filters” like Year and Month.
 To make the selection more transparent, a text field is used to provide the user with a better understanding of the selected value.
 
-![PowerBI parameter selection helper](png\Slide46.PNG)
+![PowerBI parameter selection helper](./PNG/Slide46.PNG)
 
 ###  Power BI - Limit data in an efficient and flexible way
 
@@ -330,25 +330,25 @@ Power BI and any other BI tool is not designed to handle big data. At a certain 
 To define the time window, two parameters are used, the end date of the time window (very often now) and the window width.
 If this two parameters are provided, then KQL can be used to limit the data to the time window.
 
-![ADX time window](png\Slide47.PNG)
+![ADX time window](./PNG/Slide47.PNG)
 
 In a next step we can bin the data. The bin size can be defined in a parameter. The bin size can be used to bin the data in a way that the data is aggregated in the bin size. 
 The first step is to fill the gaps in the data. Series_fill_forward() is used in our case.
 
-![ADX binning, fill the gaps](png\Slide48.PNG)
+![ADX binning, fill the gaps](./PNG/Slide48.PNG)
 
 If we are binning stock data, we have to consider how we aggregate up the data. In our example we are using the closing price of the stock in the corresponding bin window.
 
-![ADX binning](png\Slide50.PNG)
+![ADX binning](./PNG/Slide50.PNG)
 <br>
-![Calculate Gain](png\Slide51.PNG)
+![Calculate Gain](./PNG/Slide51.PNG)
 
 ###  Schedule the pipeline
 
 The pipeline is scheduled to run every day to get the stock details from the REST API. This can be done in the pipeline configuration. The pipeline is triggered by the schedule, but can also be triggered manually.<br>
 If the pipeline is not started for some days, then the pipeline will fetch the data from the last fetched date onwards. If the pipeline is started multiple times a day, nothing will happen, because the pipeline is implemented in a way that it can be restarted without data duplication or any data loss.
 
-![Schedule the pipeline](png\Slide52.PNG)
+![Schedule the pipeline](./PNG/Slide52.PNG)
 
 
 ##  Summary
@@ -356,15 +356,15 @@ If the pipeline is not started for some days, then the pipeline will fetch the d
 Microsft Fabric provides all the building block to create an end to end soltuion in a efficient way. Because of the fact that Microsoft Fabric is a SaaS service, we can focus on the business logic and do not have to care about infrastructure setup, scaling, monitoring, ... Or configuring firewall rules, setting up a VPN, ... <br>
 The solution is implemented in a way that it can be easily extended. For example, the data activator can be used to get informed if anomalies occur on stocks. The data activator can be used to trigger an alert if the stock price is changing more than 10% in a day. <br>   
 
-![Summary](png\Slide53.PNG)
+![Summary](./PNG/Slide53.PNG)
 
 <br>
 
-![Summary](png\Slide54.PNG)
+![Summary](./PNG/Slide54.PNG)
 
 ###  Conclusion
 
-![Conclusion](png\Slide56.PNG)
+![Conclusion](./PNG/Slide56.PNG)
 
 ###  Thank you for your attention
 

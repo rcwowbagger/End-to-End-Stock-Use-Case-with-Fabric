@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventhouse",
+    "displayName": "EH_Stocks",
+    "description": "EH_Stocks"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "4437f9ab-d987-8410-4c73-baefb023ac35"
+  }
+}

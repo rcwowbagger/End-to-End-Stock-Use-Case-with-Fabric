@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Environment",
+    "displayName": "ENV_Spark_Stock_Use_Case",
+    "description": "Environment"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "55ea9b9f-aee3-88a3-4417-95fa1b732c64"
+  }
+}

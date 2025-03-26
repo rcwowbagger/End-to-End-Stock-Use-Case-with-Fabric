@@ -1,0 +1,171 @@
+table fact_GetStock
+	lineageTag: 2773cca1-9bf2-4d27-bf73-ca66744e137f
+
+	column Symbol
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 7373a47c-4505-4794-a669-5da1f7a22b54
+		summarizeBy: none
+		sourceColumn: Symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column close
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 6bbb2d62-a73f-464c-9034-002b6c158e59
+		summarizeBy: sum
+		sourceColumn: close
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column volume
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: c94990f7-85b7-46c7-a314-d0e69a957226
+		summarizeBy: sum
+		sourceColumn: volume
+
+		annotation SummarizationSetBy = Automatic
+
+	column valueTimestamp
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: 3ea59b79-18b9-43dd-8f26-aca4a6207274
+		summarizeBy: none
+		sourceColumn: valueTimestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column lastClose
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 82978b9a-b557-41a2-ad82-043eb315991e
+		summarizeBy: sum
+		sourceColumn: lastClose
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gain
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 050fe213-b6ff-4c34-a117-f51ca17122db
+		summarizeBy: sum
+		sourceColumn: gain
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gainPct
+		dataType: double
+		sourceProviderType: decimal
+		lineageTag: 58f3fce2-2f39-47f0-ad76-90b782472753
+		summarizeBy: sum
+		sourceColumn: gainPct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gainPct100
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 668df572-92bd-4e48-8ea4-3cce38a12671
+		summarizeBy: sum
+		sourceColumn: gainPct100
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column gainLoss
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: 355608da-b672-437f-a730-cb1c46ca1434
+		summarizeBy: sum
+		sourceColumn: gainLoss
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucketStart_valueTimestamp
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: 201a8de2-d219-41c1-a174-208bcdb7384d
+		summarizeBy: none
+		sourceColumn: bucketStart_valueTimestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column bucketStart_close
+		dataType: double
+		sourceProviderType: double
+		lineageTag: e89115d2-caa7-429e-b341-43261a061c68
+		summarizeBy: sum
+		sourceColumn: bucketStart_close
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column minClose
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 50391192-1294-4998-ba2d-224aa24026c2
+		summarizeBy: sum
+		sourceColumn: minClose
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column avgClose
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 9b5b1032-09da-43b0-9031-1e9009a19f4d
+		summarizeBy: sum
+		sourceColumn: avgClose
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column maxClose
+		dataType: double
+		sourceProviderType: double
+		lineageTag: 7d573c7e-6586-43f9-a572-a4b8449846a9
+		summarizeBy: sum
+		sourceColumn: maxClose
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_GetStock = m
+		mode: directQuery
+		queryGroup: 'Fact Table'
+		source =
+				let
+				    Source = AzureDataExplorer.Contents(
+				        #"Kusto Cluster URI"    //Kusto Cluster URL
+				        ,#"Kusto DB"            //Kusto Database Name
+				        ,null                   //Define if table or query, default = null
+				        ,null                   //Define null if Fact Table
+				    ),
+				    GetStock = Source{[Name="GetStock"]}[Data],
+				    #"Invoked FunctionGetStock" = GetStock(DateTime.ToText(Date, "yyyy-MM-dd hh:mm"), WindowSize, BinSize)
+				in
+				    #"Invoked FunctionGetStock"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

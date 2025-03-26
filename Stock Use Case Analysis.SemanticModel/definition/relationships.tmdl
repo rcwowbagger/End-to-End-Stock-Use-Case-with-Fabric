@@ -1,0 +1,15 @@
+relationship b827373e-e56e-cafd-0455-45464a42360b
+	relyOnReferentialIntegrity
+	fromColumn: fact_GetStock.Symbol
+	toColumn: dim_Company_Timestamp.Symbol
+
+relationship 63ea047d-72f4-f517-c365-376fee637e5a
+	relyOnReferentialIntegrity
+	fromColumn: fact_GetStock.Symbol
+	toColumn: dim_Company.Symbol
+
+relationship 6b42b8ed-bd03-4581-a0b0-b3bc0d5b570b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Param_Date.Date
+	toColumn: LocalDateTable_46c12e96-078e-418a-8fed-9174c3845aa2.Date
+

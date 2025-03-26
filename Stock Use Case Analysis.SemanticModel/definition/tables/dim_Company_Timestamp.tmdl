@@ -1,0 +1,47 @@
+table dim_Company_Timestamp
+	lineageTag: 44cbbc95-5502-4020-a342-e57473b05d08
+
+	column Symbol
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: b4f86541-831c-43cb-bc37-879d783e6a54
+		summarizeBy: none
+		sourceColumn: Symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_valueTimestamp
+		dataType: dateTime
+		formatString: Short Date
+		sourceProviderType: datetimeoffset
+		lineageTag: 07899196-33ab-4609-80a4-711a5c965ee6
+		summarizeBy: none
+		sourceColumn: max_valueTimestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Company_Timestamp = m
+		mode: directQuery
+		queryGroup: 'Dimenstion Table'
+		source =
+				let
+				    Source = AzureDataExplorer.Contents(
+				        #"Kusto Cluster URI"    //Kusto Cluster URL
+				        ,#"Kusto DB"            //Kusto Database Name
+				        ,null                   //Define if table or query, default = null
+				        ,[                      //Define options as table
+				            MaxRows=null
+				            ,MaxSize=null
+				            ,NoTruncate=null
+				            ,AdditionalSetStatements=null
+				            ,IsDimension=true   //Set this option to true on Dimension tables
+				        ]
+				    ),
+				    Gold_Stock_Symbol = Source{[Name="Gold_Stock_Symbol"]}[Data]
+				in
+				    Gold_Stock_Symbol
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

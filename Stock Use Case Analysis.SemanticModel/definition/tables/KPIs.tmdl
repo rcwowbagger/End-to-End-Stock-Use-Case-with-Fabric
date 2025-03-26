@@ -1,0 +1,38 @@
+table KPIs
+	lineageTag: e4a8d56c-38a8-442a-b682-fd8af3f46f84
+
+	measure 'Selected Window Size Explanation' = "Window Size selection: " & SELECTEDVALUE(Param_WindowSize[Explanation])
+		lineageTag: 04e586d4-6903-4247-a207-20cb0d3b4176
+
+	measure 'Selected Bin Size Explanation' = "Bin Size selection: " & SELECTEDVALUE(Param_BinSize[Explanation])
+		lineageTag: 80dd5e05-2a49-4384-b90f-a8d20060d1e5
+
+	measure 'Selected Date Range Color Test' = IF(ISBLANK(SELECTEDVALUE(Param_Date[Date])), 1, 0)
+		formatString: 0
+		lineageTag: 1ad0d1da-dda3-4218-b982-9f33b8832b84
+
+	measure 'Selected Date Range' = ```
+			
+			IF (
+			    ISBLANK ( SELECTEDVALUE ( Param_Date[Date] ) ),
+			    "Please select a specific date",
+			    "Selected date " & SELECTEDVALUE ( Param_Date[Date] )
+			)
+			
+			```
+		lineageTag: 5e005d7a-7cae-4f70-bf80-8246502605a1
+
+	partition KPIs = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WSlSKjQUA", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Changed Type",{"Column1"})
+				in
+				    #"Removed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

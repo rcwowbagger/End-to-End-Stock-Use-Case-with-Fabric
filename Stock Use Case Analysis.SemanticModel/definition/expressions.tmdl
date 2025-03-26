@@ -1,0 +1,43 @@
+expression 'Kusto Cluster URI' = "https://trd-tshp09829tw6dtfu7t.z1.kusto.fabric.microsoft.com" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: e288761e-d893-4c4b-9960-e24a6b22de64
+	queryGroup: 'Environment Parameter'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression 'Kusto DB' = "EH_Stocks" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 6884bd47-d9d4-401b-9a96-c633d28b7ce9
+	queryGroup: 'Environment Parameter'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression WindowSize = "365d" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: fc550506-c2ef-41a1-8ee9-55dbdc7499bd
+	queryGroup: 'Binding Parameter'
+	parameterValuesColumn: Param_WindowSize.'Window Size'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression BinSize = "1d" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: caf9adbf-52ec-46c1-b80d-ce02046f00c4
+	queryGroup: 'Binding Parameter'
+	parameterValuesColumn: Param_BinSize.'Bin Size'
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text
+
+expression Date = #datetime(2024, 10, 24, 0, 0, 0) meta [IsParameterQuery=true, Type="DateTime", IsParameterQueryRequired=true]
+	lineageTag: 096cdfa3-ffa7-4d6b-b205-d88fe52c20da
+	queryGroup: 'Binding Parameter'
+	parameterValuesColumn: Param_Date.Date
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = DateTime
+

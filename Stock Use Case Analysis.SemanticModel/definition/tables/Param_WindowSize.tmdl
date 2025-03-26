@@ -1,0 +1,55 @@
+table Param_WindowSize
+	lineageTag: 5d0cdac2-d75d-407e-bfb0-875272dd5b2f
+
+	column 'Window Size'
+		dataType: string
+		lineageTag: 2ad474e5-c40f-4bd8-a2c4-0d1d57c836cb
+		summarizeBy: none
+		sourceColumn: Window Size
+		sortByColumn: Sorting
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 2,
+				  "kind": 1,
+				  "selectAllValue": "__SelectAll__"
+				}
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sorting
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c67c2540-fbaa-4a08-bd62-e5e7a8c327c4
+		summarizeBy: sum
+		sourceColumn: Sorting
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column Explanation
+		dataType: string
+		lineageTag: 08ec4dcb-f5d8-4b7a-b378-60f7fc6a62df
+		summarizeBy: none
+		sourceColumn: Explanation
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Param_WindowSize = m
+		mode: import
+		queryGroup: 'Parameter Table'
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMkxR0lEyBGEFl8RKpVidaCVTkJAREJuChIrBYsYGIEFjsDrf/LySDLCooQVY2ASIzSDCUNVmYDNMwcojUxOLoKqNwMJmYKNBwnDVYGPMQcoN0CTAMhZgGbhULAA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Window Size" = _t, Sorting = _t, Explanation = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Sorting", Int64.Type}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

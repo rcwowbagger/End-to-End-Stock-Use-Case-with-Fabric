@@ -1,0 +1,175 @@
+table dim_Company
+	lineageTag: 86420091-1b0e-4927-a8ec-273d0ecb69ec
+
+	column ShortName
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: a2f6cdc0-2fd3-424d-b32b-17d5c6da8b67
+		summarizeBy: none
+		sourceColumn: ShortName
+
+		annotation SummarizationSetBy = Automatic
+
+	column LongName
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 5d732e01-aee7-45ff-a87d-8030fcf608c0
+		summarizeBy: none
+		sourceColumn: LongName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Symbol
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 1bbbce4d-052c-4c94-82c5-f910db962a90
+		summarizeBy: none
+		sourceColumn: Symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column Address
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: b24b387c-aa0a-4da9-90f0-ddf05c23e310
+		summarizeBy: none
+		sourceColumn: Address
+
+		annotation SummarizationSetBy = Automatic
+
+	column City
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 5e733f00-3990-4547-8f57-69ce1c3ab962
+		summarizeBy: none
+		sourceColumn: City
+
+		annotation SummarizationSetBy = Automatic
+
+	column Zip
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: e12896b5-527e-4162-823b-f80515be9fd4
+		summarizeBy: none
+		sourceColumn: Zip
+
+		annotation SummarizationSetBy = Automatic
+
+	column State
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: d021df0d-b2c0-41d5-b0a1-168fe6fcb240
+		summarizeBy: none
+		sourceColumn: State
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 97061b49-c7ab-4ac7-bbe6-0d4deb77aa3d
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column Website
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: dabfc7af-5481-4cf0-b9c3-df464b9fc9fd
+		dataCategory: WebUrl
+		summarizeBy: none
+		sourceColumn: Website
+
+		annotation SummarizationSetBy = Automatic
+
+	column Industry
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: f82f5d4c-0486-4c1d-8560-1ecee12ed343
+		summarizeBy: none
+		sourceColumn: Industry
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 440cabb9-0ed4-4957-bafd-bff2efdb136c
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: fcf2d54c-7256-49df-b615-417349c56788
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column LogoURL
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 91b018f1-a162-4d01-9b23-52246c4b7386
+		summarizeBy: none
+		sourceColumn: LogoURL
+
+		annotation SummarizationSetBy = Automatic
+
+	column FetchDataTimestamp
+		dataType: dateTime
+		formatString: General Date
+		sourceProviderType: datetimeoffset
+		lineageTag: f3f94ead-9d59-475b-b92f-cfa83fd431de
+		summarizeBy: none
+		sourceColumn: FetchDataTimestamp
+
+		annotation SummarizationSetBy = Automatic
+
+	column StockMarket
+		dataType: string
+		sourceProviderType: nvarchar(max)
+		lineageTag: 0b7b6ebc-4228-4192-be21-0790c0262cc8
+		summarizeBy: none
+		sourceColumn: StockMarket
+
+		annotation SummarizationSetBy = Automatic
+
+	column Hash
+		dataType: int64
+		formatString: 0
+		sourceProviderType: bigint
+		lineageTag: e6a93e1e-af9d-465a-b0e6-3f423914bf31
+		summarizeBy: none
+		sourceColumn: Hash
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Company = m
+		mode: directQuery
+		queryGroup: 'Dimenstion Table'
+		source =
+				let
+				    Source = AzureDataExplorer.Contents(
+				        #"Kusto Cluster URI"    //Kusto Cluster URL
+				        ,#"Kusto DB"            //Kusto Database Name
+				        ,null                   //Define if table or query, default = null
+				        ,[                      //Define options as table
+				            MaxRows=null
+				            ,MaxSize=null
+				            ,NoTruncate=null
+				            ,AdditionalSetStatements=null
+				            ,IsDimension=true   //Set this option to true on Dimension tables
+				        ]
+				    ),
+				    Company = Source{[Name="Company"]}[Data]
+				in
+				    Company
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

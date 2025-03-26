@@ -1,0 +1,30 @@
+table Param_Date
+	lineageTag: f160b5da-a44f-4e5c-8b82-9304d90ffe07
+
+	column Date
+		formatString: Short Date
+		lineageTag: e4c5735d-9f1a-40bb-8435-24e26feacadf
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		variation Variation
+			isDefault
+			relationship: 6b42b8ed-bd03-4581-a0b0-b3bc0d5b570b
+			defaultHierarchy: LocalDateTable_46c12e96-078e-418a-8fed-9174c3845aa2.'Date Hierarchy'
+
+		extendedProperty ParameterMetadata =
+				{
+				  "version": 2,
+				  "kind": 1,
+				  "selectAllValue": "__SelectAll__"
+				}
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Param_Date = calculated
+		mode: import
+		source = CALENDAR(DATE(2000, 1, 1), TODAY())
+
+	annotation PBI_Id = 721a358093d1445e88825fc20d1efef3
+

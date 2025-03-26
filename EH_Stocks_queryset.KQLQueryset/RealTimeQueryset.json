@@ -1,0 +1,262 @@
+{
+  "payload": {
+    "connections": {
+      "-2092879307": {
+        "clusterType": "Engine",
+        "name": "-2092879307",
+        "connectionString": "",
+        "initialCatalog": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "databases": {
+          "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3": {
+            "id": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+            "name": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+            "prettyName": "EH_Stocks",
+            "fetchState": "notStarted",
+            "fetchStateError": "",
+            "tables": {},
+            "functions": {},
+            "entityGroups": {},
+            "accessMode": "ReadWrite",
+            "minorVersion": 0,
+            "majorVersion": 9826
+          }
+        },
+        "id": "-2092879307",
+        "fetchState": "done",
+        "fetchStateError": "",
+        "tooBigToCache": true,
+        "serviceOffering": "Trident"
+      }
+    },
+    "tabs": [
+      {
+        "id": "6505a0a7-3653-4ad9-8e06-3fe9756d7697",
+        "queryRange": {
+          "startLineNumber": 1,
+          "startColumn": 1,
+          "endLineNumber": 42,
+          "endColumn": 2
+        },
+        "title": "01 Create critical Stock Objects",
+        "text": "remove me to start\n.execute database script with (ContinueOnErrors = true) <|\n.drop materialized-view Gold_Stock\n.drop materialized-view Gold_Stock_Symbol\n.execute database script <|\n.drop table Gold_Stock_Symbol ifexists \n.drop table Silver_Stock ifexists \n.drop table Bronze_Stock ifexists\n.create table Bronze_Stock (StockInfo : dynamic) with (folder = 'Bronze', docstring = 'This table contains the RAW data coming from the Yahoo Finance Python library')\n.alter table Bronze_Stock policy ingestiontime true\n//\n.create-or-alter function with (folder = 'Bronze') Bronze_Parse_StockInfo()\n{\nBronze_Stock\n| extend IngestionTime = ingestion_time()\n| extend Symbol=StockInfo.main.symbol, fetchTimestamp=StockInfo.main.timestamp, PipelineRunId = StockInfo.main.pipelineRunId\n| mv-expand data = StockInfo.data\n| extend valueTimestamp = data.['date'], open = data.open, high = data.high, low = data.low, close = data.close, volume = data.volume, dividends = data.dividends, stockSplits = data.stockSplits\n| extend Symbol = tostring(Symbol), open = todecimal(open), high = todecimal(high), low = todecimal(low), close = todecimal(close), volume = toint(volume), dividends = todecimal(dividends), stockSplits = tostring(stockSplits)\n| extend fetchTimestamp = unixtime_seconds_todatetime(tolong(fetchTimestamp)), valueTimestamp = unixtime_milliseconds_todatetime(tolong(valueTimestamp))\n| project-away data, StockInfo\n}\n//\n//\n.set-or-append Silver_Stock with (folder = 'Silver') <| Bronze_Parse_StockInfo()\n//\n//\n.alter table Silver_Stock policy update\n@'[{\"IsEnabled\": true,\"Source\": \"Bronze_Stock\",\"Query\": \"Bronze_Parse_StockInfo()\",\"IsTransactional\": true}]'\n//\n//\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock on table Silver_Stock\n{\nSilver_Stock\n| summarize arg_max(valueTimestamp, *) by Symbol, valueTimestamp\n}\n//\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock_Symbol on table Silver_Stock\n{\nSilver_Stock\n| summarize max(valueTimestamp) by Symbol\n}",
+        "commandInContext": "remove me to start\r\n.execute database script with (ContinueOnErrors = true) <|\r\n.drop materialized-view Gold_Stock\r\n.drop materialized-view Gold_Stock_Symbol\r\n.execute database script <|\r\n.drop table Gold_Stock_Symbol ifexists \r\n.drop table Silver_Stock ifexists \r\n.drop table Bronze_Stock ifexists\r\n.create table Bronze_Stock (StockInfo : dynamic) with (folder = 'Bronze', docstring = 'This table contains the RAW data coming from the Yahoo Finance Python library')\r\n.alter table Bronze_Stock policy ingestiontime true\r\n//\r\n.create-or-alter function with (folder = 'Bronze') Bronze_Parse_StockInfo()\r\n{\r\nBronze_Stock\r\n| extend IngestionTime = ingestion_time()\r\n| extend Symbol=StockInfo.main.symbol, fetchTimestamp=StockInfo.main.timestamp, PipelineRunId = StockInfo.main.pipelineRunId\r\n| mv-expand data = StockInfo.data\r\n| extend valueTimestamp = data.['date'], open = data.open, high = data.high, low = data.low, close = data.close, volume = data.volume, dividends = data.dividends, stockSplits = data.stockSplits\r\n| extend Symbol = tostring(Symbol), open = todecimal(open), high = todecimal(high), low = todecimal(low), close = todecimal(close), volume = toint(volume), dividends = todecimal(dividends), stockSplits = tostring(stockSplits)\r\n| extend fetchTimestamp = unixtime_seconds_todatetime(tolong(fetchTimestamp)), valueTimestamp = unixtime_milliseconds_todatetime(tolong(valueTimestamp))\r\n| project-away data, StockInfo\r\n}\r\n//\r\n//\r\n.set-or-append Silver_Stock with (folder = 'Silver') <| Bronze_Parse_StockInfo()\r\n//\r\n//\r\n.alter table Silver_Stock policy update\r\n@'[{\"IsEnabled\": true,\"Source\": \"Bronze_Stock\",\"Query\": \"Bronze_Parse_StockInfo()\",\"IsTransactional\": true}]'\r\n//\r\n//\r\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock on table Silver_Stock\r\n{\r\nSilver_Stock\r\n| summarize arg_max(valueTimestamp, *) by Symbol, valueTimestamp\r\n}\r\n//\r\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock_Symbol on table Silver_Stock\r\n{\r\nSilver_Stock\r\n| summarize max(valueTimestamp) by Symbol\r\n}",
+        "executionStatus": "notStarted",
+        "clientRequestId": null,
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "remove me to start\r\n.execute database script with (ContinueOnErrors = true) <|\r\n.drop materialized-view Gold_Stock\r\n.drop materialized-view Gold_Stock_Symbol\r\n.execute database script <|\r\n.drop table Gold_Stock_Symbol ifexists \r\n.drop table Silver_Stock ifexists \r\n.drop table Bronze_Stock ifexists\r\n.create table Bronze_Stock (StockInfo : dynamic) with (folder = 'Bronze', docstring = 'This table contains the RAW data coming from the Yahoo Finance Python library')\r\n.alter table Bronze_Stock policy ingestiontime true\r\n//\r\n.create-or-alter function with (folder = 'Bronze') Bronze_Parse_StockInfo()\r\n{\r\nBronze_Stock\r\n| extend IngestionTime = ingestion_time()\r\n| extend Symbol=StockInfo.main.symbol, fetchTimestamp=StockInfo.main.timestamp, PipelineRunId = StockInfo.main.pipelineRunId\r\n| mv-expand data = StockInfo.data\r\n| extend valueTimestamp = data.['date'], open = data.open, high = data.high, low = data.low, close = data.close, volume = data.volume, dividends = data.dividends, stockSplits = data.stockSplits\r\n| extend Symbol = tostring(Symbol), open = todecimal(open), high = todecimal(high), low = todecimal(low), close = todecimal(close), volume = toint(volume), dividends = todecimal(dividends), stockSplits = tostring(stockSplits)\r\n| extend fetchTimestamp = unixtime_seconds_todatetime(tolong(fetchTimestamp)), valueTimestamp = unixtime_milliseconds_todatetime(tolong(valueTimestamp))\r\n| project-away data, StockInfo\r\n}\r\n//\r\n//\r\n.set-or-append Silver_Stock with (folder = 'Silver') <| Bronze_Parse_StockInfo()\r\n//\r\n//\r\n.alter table Silver_Stock policy update\r\n@'[{\"IsEnabled\": true,\"Source\": \"Bronze_Stock\",\"Query\": \"Bronze_Parse_StockInfo()\",\"IsTransactional\": true}]'\r\n//\r\n//\r\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock on table Silver_Stock\r\n{\r\nSilver_Stock\r\n| summarize arg_max(valueTimestamp, *) by Symbol, valueTimestamp\r\n}\r\n//\r\n.create materialized-view with (folder = 'Gold', backfill = true) Gold_Stock_Symbol on table Silver_Stock\r\n{\r\nSilver_Stock\r\n| summarize max(valueTimestamp) by Symbol\r\n}",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 42,
+          "column": 2
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "52ceee9e-78ce-498d-a089-fb5d3deecc07",
+        "queryRange": {
+          "startLineNumber": 1,
+          "startColumn": 1,
+          "endLineNumber": 41,
+          "endColumn": 2
+        },
+        "title": "02 Create stock objects",
+        "text": ".execute database script with (ContinueOnErrors = true) <|\n.create-or-alter function with (Folder=\"Gold\") Stock ()\n{\n  Gold_Stock\n  | project-away valueTimestamp1\n}\n//\n.create-or-alter function with (folder = 'Power BI') GetStock (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n    //\n    // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n    | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n    | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n    | mv-expand close, volume, valueTimestamp\n    | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n    //\n    // Create buckets\n    | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n    | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n            , Symbol\n            , close                                         // Close of the last valueTimestamp in bucket\n            , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n            , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n            , minClose\n            , avgClose\n            , maxClose                  \n            , volume                                        // Sum of the volume in the bucket\n    //\n    // Calculate the growth on bucket granularity\n    | partition by Symbol\n    (\n      order by valueTimestamp asc\n      | extend lastClose = prev(close)\n      | extend gain = close - lastClose\n      | extend gainPct = gain/lastClose\n      | extend gainPct100 = round(gainPct * 100,2)\n      | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n    )\n}",
+        "commandInContext": ".execute database script with (ContinueOnErrors = true) <|\n.create-or-alter function with (Folder=\"Gold\") Stock ()\n{\n  Gold_Stock\n  | project-away valueTimestamp1\n}\n//\n.create-or-alter function with (folder = 'Power BI') GetStock (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n    //\n    // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n    | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n    | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n    | mv-expand close, volume, valueTimestamp\n    | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n    //\n    // Create buckets\n    | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n    | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n            , Symbol\n            , close                                         // Close of the last valueTimestamp in bucket\n            , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n            , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n            , minClose\n            , avgClose\n            , maxClose                  \n            , volume                                        // Sum of the volume in the bucket\n    //\n    // Calculate the growth on bucket granularity\n    | partition by Symbol\n    (\n      order by valueTimestamp asc\n      | extend lastClose = prev(close)\n      | extend gain = close - lastClose\n      | extend gainPct = gain/lastClose\n      | extend gainPct100 = round(gainPct * 100,2)\n      | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n    )\n}",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;9233c488-a071-4200-a710-0c7743d6211c;fa5dcb68-ab39-4bb2-af86-43bbc4784e79",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "AdminCommand",
+        "commandWithoutLeadingComments": ".execute database script with (ContinueOnErrors = true) <|\n.create-or-alter function with (Folder=\"Gold\") Stock ()\n{\n  Gold_Stock\n  | project-away valueTimestamp1\n}\n//\n.create-or-alter function with (folder = 'Power BI') GetStock (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n    //\n    // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n    | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n    | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n    | mv-expand close, volume, valueTimestamp\n    | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n    //\n    // Create buckets\n    | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n    | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n            , Symbol\n            , close                                         // Close of the last valueTimestamp in bucket\n            , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n            , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n            , minClose\n            , avgClose\n            , maxClose                  \n            , volume                                        // Sum of the volume in the bucket\n    //\n    // Calculate the growth on bucket granularity\n    | partition by Symbol\n    (\n      order by valueTimestamp asc\n      | extend lastClose = prev(close)\n      | extend gain = close - lastClose\n      | extend gainPct = gain/lastClose\n      | extend gainPct100 = round(gainPct * 100,2)\n      | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n    )\n}",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 41,
+          "column": 2
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "a7b64b38-47cd-4b2f-a424-9ce3e8300a80",
+        "queryRange": {
+          "startLineNumber": 1,
+          "startColumn": 1,
+          "endLineNumber": 3,
+          "endColumn": 1
+        },
+        "title": "03 Create all company objects",
+        "text": "remove me to start\n\n.execute database script with (ContinueOnErrors = true) <|\n.drop materialized-view Company\n.execute database script <|\n.drop table Silver_Company ifexists \n.set-or-append Silver_Company with (folder = 'Silver') <|\nexternal_table('bronze_company_8') \n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket\n| extend Hash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\n| where 1 == 2\n//\n.create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\n{\nlet companyCount=toscalar(Silver_Company | count);\nexternal_table('bronze_company_8')\n| extend companyCount\n| extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update\n| join kind=leftouter Silver_Company on Symbol\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\n| where  BronzeHash <> Hash\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\n}\n//\n.create-or-alter materialized-view with (folder = 'Gold', backfill = true) Company on table Silver_Company\n{\nSilver_Company\n| summarize arg_max(FetchDataTimestamp, *) by Symbol\n}\n//\n.set-or-append Silver_Company <| Bronze_Changed_CompanyInfo\n.set-or-append Silver_Company <| Bronze_Changed_CompanyInfo\n\nSilver_Company\n| where Symbol == 'MSFT'\n\nCompany\n| where Symbol == 'MSFT'",
+        "commandInContext": "remove me to start\n\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;9233c488-a071-4200-a710-0c7743d6211c;9fcebe18-36c7-465a-8eef-4866b45844f7",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "remove me to start\n\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 1,
+          "column": 19
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "88270327-2f59-4ba4-996b-e4c2e8298c4b",
+        "queryRange": {
+          "startLineNumber": 186,
+          "startColumn": 1,
+          "endLineNumber": 187,
+          "endColumn": 1
+        },
+        "title": "StockAnalysis",
+        "text": "\nStock\n| where Symbol in ('AAPL', 'MSFT', 'ORCL', 'NVDA', 'ABBN.SW', 'GOOG')\n| where valueTimestamp  > datetime(1996-01-01)\n| summarize max(close) by Symbol, bin(valueTimestamp, 30d)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\n// raw data, fill the gap, either linear or forward\n\nStock\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\nStock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\n\nStock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n//| extend      sValue = series_fill_linear(sValue)\n//| extend      sValue = series_fill_forward(sValue)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\nStock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n//| extend      sValue = series_fill_linear(sValue)\n//| extend      sValue = series_fill_forward(sValue)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\n\n\nStock\n| where Symbol in ('AAPL', 'MSFT', 'ORCL', 'NVDA', 'ABBN.SW', 'GOOG')\n| where valueTimestamp  between (datetime(2023-01-01) .. now())\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| extend      sValue = series_fill_linear(sValue)\n| extend Yesterday_sValue = array_shift_right(sValue, 1)\n| extend gain = series_subtract(sValue, Yesterday_sValue)\n| extend pct_gain        = series_divide  (gain, Yesterday_sValue)\n| mv-expand valueTimestamp, sValue, Yesterday_sValue, gain, pct_gain\n| extend pct_gain = toreal(pct_gain) * 100, gain=toreal(gain)\n| project Symbol, todatetime(valueTimestamp), pct_gain, gain // sValue, Yesterday_sValue, gain, pct_gain\n| render linechart with(xcolumn=valueTimestamp, ycolumns=pct_gain, series=Symbol)\n\n\n\nStock\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| extend      sValue = series_fill_linear(sValue)\n| extend Yesterday_sValue= array_shift_right(sValue, 1)\n| extend gain = series_subtract(sValue, Yesterday_sValue)\n| extend pct_gain        = series_divide  (gain, Yesterday_sValue)\n| mv-expand valueTimestamp, sValue, Yesterday_sValue, gain, pct_gain\n| project Symbol, valueTimestamp, sValue, Yesterday_sValue, gain, pct_gain\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| extend FilledSeries = series_fill_const(AvgValue, 0)\n| extend SeriesLength = array_length(FilledSeries)\n\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| extend FilledSeries = series_fill_const(AvgValue, 10)\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| mv-apply AvgValue on (summarize Multiplier = make_list(10))\n\n\n\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| extend SeriesLength = mvcount(AvgValue)\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| extend SeriesLength = mvcount(AvgValue)\n\n\nlet MyTable = datatable(Timestamp: datetime, Value: int)\n[\n    datetime(2023-01-01), 1,\n    datetime(2023-01-02), 2,\n    datetime(2023-01-03), 3,\n    datetime(2023-01-04), 4,\n    datetime(2023-01-05), 5\n];\nMyTable\n| make-series AvgValue = avg(Value) on Timestamp from datetime(2023-01-01) to datetime(2023-01-05) step 1d\n| extend SeriesLength = array_length(AvgValue)\n\n\n\nrange x from 1 to 3 step 1\n| extend y = x * 2\n| extend z = y * 2\n| project s1 = pack_array(x, y, z), s2 = pack_array(z, y, x)\n| extend s1_multiply_s2 = series_multiply(s1, s2)\n| extend multiplier = series_fill_const(10, array_length(s1_multiply_s2))\n| extend s1_multiply_s2_times_10 = series_multiply(s1_multiply_s2, multiplier)\n\n\nStock\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| extend      sValue = series_fill_linear(sValue)\n| extend DayAhead_sValue= array_shift_left(sValue, 1)\n| extend gain = series_subtract(DayAhead_sValue, sValue)\n| project Symbol, valueTimestamp, gain\n| render linechart with( xcolumn=valueTimestamp, series=Symbol)\n\n\n\nStock\n| make-series sValue     = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| extend      sValue     = series_fill_linear(sValue)\n| extend DayAhead_sValue = array_shift_left  (sValue, 1)\n| extend gain            = series_subtract(DayAhead_sValue, sValue)\n| extend pct_gain        = series_divide  (DayAhead_sValue, sValue)\n| project Symbol, valueTimestamp, pct_gain \n| render linechart with( xcolumn=valueTimestamp, series=Symbol)\n\n\n\nStock\n| where Symbol == 'MSFT'\n| where valueTimestamp  between (datetime(2024-05-26) .. datetime(2024-06-01))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\nGold_Stock_Symbol\n",
+        "commandInContext": "Gold_Stock_Symbol\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.Query;62c4c33a-34bc-4761-a29d-2c15e02f4a90;88de819a-e2dd-4190-b61d-83ce987f5e4e",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "Gold_Stock_Symbol\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 187,
+          "column": 1
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "99a4f5f9-19b2-47c6-89d2-6d558503cc00",
+        "queryRange": {
+          "startLineNumber": 65,
+          "startColumn": 1,
+          "endLineNumber": 68,
+          "endColumn": 1
+        },
+        "title": "DemoMew",
+        "text": "Stock\n| where Symbol in ('AAPL', 'MSFT', 'ORCL', 'NVDA', 'ABBN.SW', 'GOOG')\n| where valueTimestamp  > datetime(1996-01-01)\n| summarize max(close) by Symbol, bin(valueTimestamp, 30d)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\nStock\n| count  // 58'802  11:22\n\nBronze_Stock\n| count  // 233  11:39\n\n\n//.create-or-alter function with (folder = 'Bronze') Bronze_Parse_StockInfo()\n//{\n  Bronze_Stock\n  | take 1\n  | evaluate bag_unpack(StockInfo)\n  | evaluate bag_unpack(main)\n  | mv-expand data\n  | evaluate bag_unpack(data)\n  | extend \n     valueTimestamp = unixtime_milliseconds_todatetime(tolong(['date']))\n    ,fetchTimestamp = unixtime_seconds_todatetime(tolong(timestamp))\n    ,stockSplits    = tostring(stockSplits)\n  | project-away ['date'], timestamp\n//}\n\nCompany\n\nGold_Stock\n| distinct Symbol\n\nGold_Stock\n| project Symbol, valueTimestamp, close\n| where Symbol == \"MSFT\"\n| order by valueTimestamp desc\n| take 10\n| order by Symbol, valueTimestamp asc\n| extend lastClose = prev(close)\n| extend gain = close - lastClose\n| extend gainPct = gain/lastClose\n| extend gainPct100 = round(gainPct * 100,2)\n| extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n  // )\n\n\n\n.create-or-alter function with (Folder=\"Gold\") Stock ()\n{\n  Gold_Stock\n  | project-away valueTimestamp1\n  | partition by Symbol\n  (\n    order by Symbol, valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n}\n\nGold_Stock\n| count \n\nStock\n| where Symbol == 'MSFT'\n| order by valueTimestamp\n| project Symbol, valueTimestamp, close, gain, gainPct, gainPct100, gainLoss\n",
+        "commandInContext": "Gold_Stock\n| count \n\n",
+        "executionStatus": "gotFromCache",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;62c4c33a-34bc-4761-a29d-2c15e02f4a90;91c32416-3897-416c-82c8-0ee684d79102",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "Gold_Stock\n| count \n\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 67,
+          "column": 1
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "48875e90-d83b-4201-879f-6eceac1840ba",
+        "queryRange": {
+          "startLineNumber": 20,
+          "startColumn": 1,
+          "endLineNumber": 29,
+          "endColumn": 1
+        },
+        "text": "//.create-or-alter function  with  (folder=\"Gold\") Stock ()\n{\n Gold_Stock\n | project Symbol, valueTimestamp, close\n | where Symbol == \"MSFT\"\n | order by valueTimestamp desc\n | partition by Symbol\n (\n    order by valueTimestamp asc\n  | extend lastClose = prev(close)\n  | extend gain = close - lastClose\n  | extend gainPct = gain/lastClose\n  | extend gainPct100 = round(gainPct * 100,2)\n  | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n  | project-away lastClose\n )\n}\n\n\nStock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n//| extend sValue = series_fill_linear(sValue)  \n| extend sValue = series_fill_forward(sValue)  \n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n| render anomalychart with(anomalycolumns=anomalies, title='Web app. traffic of a month, anomalies') //use \"| render anomalychart with anomalycolumns=anomalies\" to render the anomalies as bold points on the series charts.\n\n\nlet min_t = datetime(2017-01-05);\nlet max_t = datetime(2017-02-03 22:00);\nlet dt = 2h;\ndemo_make_series2\n| make-series num=avg(num) on TimeStamp from min_t to max_t step dt by sid \n| where sid == 'TS1'   //  select a single time series for a cleaner visualization\n| extend (anomalies, score, baseline) = series_decompose_anomalies(num, 1.5, -1, 'linefit')\n| render anomalychart with(anomalycolumns=anomalies, title='Web app. traffic of a month, anomalies') //use \"| render anomalychart with anomalycolumns=anomalies\" to render the anomalies as bold points on the series charts.\n\nStock\n| getschema \n\n\nStock\n| where Symbol in ('MSFT', 'NVDA')\n//| where Symbol in ('MSFT', 'GOOG')\n| where valueTimestamp  between (datetime(2023-01-01) .. now())\n| render linechart with (ymin= -10,ymax=25, ycolumns=gainPct100,   xcolumn=valueTimestamp)\n    \n\n\nStock\n| where Symbol in ('MSFT', 'NVDA')\n//| where Symbol in ('MSFT', 'GOOG')\n| where valueTimestamp  between (datetime(2023-01-01) .. now())\n\nlet EndDate = datetime(2024-10-15);\n//let CompareSymbol = 'GOOG';\nlet CompareSymbol = 'NVDA';\nlet MSFT_Stock = Stock\n| where Symbol == 'MSFT'\n| where valueTimestamp  between (datetime(2023-01-01) .. EndDate)\n| make-series MSFT_gainPct100 = take_any(gainPct100) default=real(null) on valueTimestamp step 1d by Symbol\n| extend MSFT_gainPct100 = series_fill_forward(MSFT_gainPct100);  \nlet Second_Stock_gainPct100 = toscalar ( Stock\n| where Symbol ==  CompareSymbol\n| where valueTimestamp  between (datetime(2023-01-01) .. EndDate)\n| make-series Second_Stock_gainPct100 = take_any(gainPct100) default=real(null) on valueTimestamp step 1d by Symbol\n| extend Second_Stock_gainPct100 = series_fill_forward(Second_Stock_gainPct100)  \n| project SecondStocsValue = Second_Stock_gainPct100);\nMSFT_Stock\n| extend Second_Stock_gainPct100\n| extend difference = series_subtract(MSFT_gainPct100, Second_Stock_gainPct100)\n//| render linechart with (ymin=-25, ymax=15,ycolumns=difference,MSFT_gainPct100, Second_Stock_gainPct100)\n| render linechart with (ymin=-25, ymax=15, ycolumns=difference, xcolumn=valueTimestamp)\n\nStock\n| getschema \n\n\n\n\nGold_Stock\n| where valueTimestamp between (datetime(2020-01-01) .. datetime(2021-05-01)) and Symbol in('AAPL', 'GOOG', 'MSFT')\n| partition by Symbol\n(\n    order by valueTimestamp asc \n    | extend pValueTimestamp=prev(valueTimestamp), pClose=prev(close)\n    | extend delta = close - pClose\n    | scan with_match_id=m_id declare(down:bool=false, step:string) with \n    (\n        //  if state of s1 is empty we require price increase, else continue as long as price doesn't decrease \n        step s1: delta >= 0 and (delta > 0 or isnotnull(s1.delta)) => step = 's1';\n        //   exit the 'rally' when price decrease, also forcing a single match \n        step s2: delta < 0 and s2.down == false => down = true, step = 's2';\n    )\n)\n| where step == 's1'   //  select only records with price increase\n| summarize (start_date, start_Close, start_delta)=arg_min(pValueTimestamp, pClose, delta)\n           , end_date=max(pValueTimestamp), trading_days=count(), total_delta=sum(delta)           by Symbol, m_id\n| extend delta_pct = total_delta*100.0/start_Close\n| summarize arg_max(delta_pct, *) by Symbol\n| project Symbol, start_date, end_date, trading_days, delta_pct, start_Close, total_delta\n| order by delta_pct\n\nGold_Stock\n| where valueTimestamp between (datetime(2020-01-01) .. datetime(2021-05-01)) and Symbol in('AAPL', 'GOOG', 'MSFT')\n| project Symbol, valueTimestamp, close\n| evaluate pivot(Symbol, any(close))\n| render timechart with(ysplit=panels)\n\n\n\nGold_Stock\n| where valueTimestamp between (datetime(2020-01-01) .. datetime(2021-05-01)) and Symbol in('AAPL', 'GOOG', 'MSFT')\n| partition by Symbol\n(\n    order by valueTimestamp asc \n    | extend pDate=prev(valueTimestamp), pAdjClose=prev(close)\n    | extend delta = close - pAdjClose\n    | scan with_match_id=m_id declare(down:bool=false, step:string) with \n    (\n        //  if state of s1 is empty we require price increase, else continue as long as price doesn't decrease \n        step s1: delta >= 0 and (delta > 0 or isnotnull(s1.delta)) => step = 's1';\n        //   exit the 'rally' when price decrease, also forcing a single match \n        step s2: delta < 0 and s2.down == false => down = true, step = 's2';\n    )\n)\n| where step == 's1'   //  select only records with price increase\n| summarize (start_date, start_AdjClose, start_delta)=arg_min(pDate, pAdjClose, delta), end_date=max(valueTimestamp), trading_days=count(), total_delta=sum(delta) by Symbol, m_id\n| extend delta_pct = total_delta*100.0/start_AdjClose\n| summarize arg_max(delta_pct, *) by Symbol\n| project Symbol, start_date, end_date, trading_days, delta_pct, start_AdjClose, total_delta\n| order by delta_pct\n\n\n",
+        "commandInContext": "Stock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n//| extend sValue = series_fill_linear(sValue)  \n| extend sValue = series_fill_forward(sValue)  \n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.Query;b2b5b907-d51f-4d80-b9aa-0e633346927f;5b5ed4ef-3a37-4596-be13-2727a180823e",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "Stock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n//| extend sValue = series_fill_linear(sValue)  \n| extend sValue = series_fill_forward(sValue)  \n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 27,
+          "column": 1
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "b8bf962d-eb3e-4630-a011-f6ae21fc3528",
+        "queryRange": {
+          "startLineNumber": 14,
+          "startColumn": 1,
+          "endLineNumber": 16,
+          "endColumn": 1
+        },
+        "text": ".show function GetStock \n\n.create-or-alter function GetStock(UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between ( now() - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimeStamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n}\n\nStock\n| getschema\n\n\nGetStock(now(),'120d','7d')\n\nGetStock(datetime('2023-06-24'),'12d','2d')",
+        "commandInContext": "GetStock(now(),'120d','7d')\n\n",
+        "executionStatus": "gotFromCache",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;62c4c33a-34bc-4761-a29d-2c15e02f4a90;68298466-c809-4553-b438-d25b16ccecff",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "GetStock(now(),'120d','7d')\n\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 14,
+          "column": 1
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "8dddc0fa-f2f2-4930-bd41-943f76aec9fc",
+        "queryRange": {
+          "startLineNumber": 140,
+          "startColumn": 1,
+          "endLineNumber": 140,
+          "endColumn": 1
+        },
+        "title": "EH_Stocks_NewGetstock",
+        "text": "external_table('bronze_company_6')\n\n\n.create-or-alter function with (folder = 'Power BI') GetStock (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\nStock\n| where valueTimestamp between ( now() - totimespan(WindowSize) .. UpperEnd) \n| summarize close = max(close), volume = sum(volume) by valueTimeStamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n}\n\n\nlet TestData = datatable(Timestamp: datetime, Value: int, Sales : int)\n[\n    datetime(2023-10-30T08:00:00), 10, 5,\n    datetime(2023-10-30T08:30:00), 20, 5, \n    datetime(2023-10-30T09:00:00), 30, 5,\n    datetime(2023-10-30T09:30:00), 40, 5,\n    datetime(2023-10-30T10:00:00), 50, 5,\n    datetime(2023-10-30T10:30:00), 60, 5,\n    datetime(2023-10-30T11:00:00), 70, 5,\n    datetime(2023-10-30T11:30:00), 80, 5\n];\nTestData\n| summarize LastValueTs = arg_max(Timestamp, Value), s=sum(Sales) by bin(Timestamp, 1h)\n| project Timestamp, LastValueTs, Value, s\n\n\nlet UpperEnd = now();\nlet WindowSize = '25d';\nlet BinSize = '2d';\nStock\n| where valueTimestamp between ( now() - totimespan(WindowSize) .. UpperEnd) and valueTimestamp <= todatetime(\"2024-10-21T00:00:00Z\")\n| where Symbol == 'MSFT'\n| summarize arg_max(valueTimestamp, close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n| project valueTimestamp=valueTimestamp1, Symbol, close, volume\n\n.show function GetStock\n\n\nlet UpperEnd = now();\nlet WindowSize = '25d';\nlet BinSize = '2d';\nStock\n| where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) and valueTimestamp <= todatetime(\"2024-10-21T00:00:00Z\")\n// Generate a data point for every day and fill it forward\n| make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n| extend close = series_fill_forward(close)  \n| mv-expand close, volume, valueTimestamp \n| extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n// create bins, based on user request\n| summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n| extend binStartClose=close1\n| project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n| order by Symbol, valueTimestamp\n\n\n\n.create-or-alter function with (folder=\"Gold\") GetStock2 (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) \n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp \n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n  | order by Symbol, valueTimestamp\n}\n\nlet UpperEnd = ago(300day) ;\nlet WindowSize = '25d';\nlet BinSize = '2d';\nGetStock2(UpperEnd, WindowSize, BinSize)\n| where Symbol == 'MSFT'\n\n\nlet UpperEnd = ago(300day) ;\nprint UpperEnd\n\nStock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n//| extend sValue = series_fill_linear(sValue)  \n| extend sValue = series_fill_forward(sValue)  \n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n\n\nlet UpperEnd = now();\nlet WindowSize = '25d';\nlet BinSize = '2d';\nStock\n| where valueTimestamp between ( now() - totimespan(WindowSize) .. UpperEnd) and valueTimestamp <= todatetime(\"2024-10-21T00:00:00Z\")\n| summarize close = max(close), volume = sum(volume) by valueTimeStamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n| order by Symbol, valueTimeStamp\n\n\nSilver_Stock\n//| count   // 138K\n| summarize arg_max(IngestionTime, *) by Symbol, valueTimestamp\n| take 10\n\n//| count // IngestionTime 87'455\n| summarize arg_max(valueTimestamp, *) by Symbol, valueTimestamp\n| count // valueTimestamp\n\nexternal_table('bronze_company_7')\n\n\n\n\n\n.create-or-alter function with (folder=\"Gold\") GetStock3 (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd) \n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp \n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n  | order by Symbol, valueTimestamp\n}\n\nlet UpperEnd = ago(90day) ;\nlet WindowSize = '25d';\nlet BinSize = '2d';\nGetStock3(UpperEnd, WindowSize, BinSize)\n| where Symbol == 'MSFT'\n\n",
+        "commandInContext": "",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.Query;862de9c3-a87e-4eaf-8ede-953ec68d24fa;37bfd42d-377c-4686-89c3-8ff9f1b3ceb8",
+        "completionInfo": 1499728420,
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Unknown",
+        "commandWithoutLeadingComments": "",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 140,
+          "column": 1
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "31dab149-89a8-4811-812b-890b01504927",
+        "queryRange": {
+          "startLineNumber": 4,
+          "startColumn": 1,
+          "endLineNumber": 16,
+          "endColumn": 1
+        },
+        "text": ".show function GetStock\n\n\n  Gold_Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimestamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n",
+        "commandInContext": "  Gold_Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimestamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;d6dcf144-7506-4ff2-993e-fc593bcf6b6a;569a7564-8477-4fc5-a993-dd8f0be7550b",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "  Gold_Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimestamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 5,
+          "column": 5
+        },
+        "isProtectedMode": false
+      },
+      {
+        "id": "0e1ff07d-d473-4889-807d-c37d78a0cd17",
+        "queryRange": {
+          "startLineNumber": 35,
+          "startColumn": 1,
+          "endLineNumber": 50,
+          "endColumn": 1
+        },
+        "text": "Gold_Stock\n| order by valueTimestamp desc\n\n.show functions \n\n{\n  Gold_Stock\n  | project-away valueTimestamp1\n  | partition by Symbol\n  (\n    order by Symbol, valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n}\n\n{\n  Gold_Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimestamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n}\n\n{\n  Stock\n  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) \n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp \n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n  | order by Symbol, valueTimestamp\n}\n\n\n\n\n\n{\n  Gold_Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)\n  | summarize close = max(close), volume = sum(volume) by valueTimestamp = bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n}",
+        "commandInContext": "{\n  Stock\n  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) \n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp \n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n  | order by Symbol, valueTimestamp\n}\n\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.QuerySet;9233c488-a071-4200-a710-0c7743d6211c;a49e0d3b-a2c6-4f00-9898-3b6fcc578702",
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "{\n  Stock\n  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) \n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp \n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume \n  | order by Symbol, valueTimestamp\n}\n\n",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 35,
+          "column": 1
+        },
+        "isProtectedMode": false
+      }
+    ],
+    "tabInContext": "8dddc0fa-f2f2-4930-bd41-943f76aec9fc"
+  }
+}

@@ -1,0 +1,106 @@
+// KQL script
+// Use management commands in this script to configure your database items, such as tables, functions, materialized views, and more.
+
+
+.create-merge table Bronze_Stock (StockInfo:dynamic) with (folder = "Bronze", docstring = "This table contains the RAW data coming from the Yahoo Finance Python library") 
+.create-merge table Silver_Stock (IngestionTime:datetime, Symbol:string, fetchTimestamp:datetime, PipelineRunId:dynamic, valueTimestamp:datetime, open:decimal, high:decimal, low:decimal, close:decimal, volume:int, dividends:decimal, stockSplits:string) with (folder = "Silver") 
+.create-merge table Silver_Company (ShortName:string, LongName:string, Symbol:string, Address:string, City:string, Zip:string, State:string, Country:string, Website:string, Industry:string, Sector:string, Currency:string, LogoURL:string, FetchDataTimestamp:datetime, StockMarket:string, Hash:long) with (folder = "Silver") 
+.create-or-alter function with (folder = "Bronze", skipvalidation = "true") Bronze_Parse_StockInfo() {
+Bronze_Stock
+| extend IngestionTime = ingestion_time()
+| extend Symbol=StockInfo.main.symbol, fetchTimestamp=StockInfo.main.timestamp, PipelineRunId = StockInfo.main.pipelineRunId
+| mv-expand data = StockInfo.data
+| extend valueTimestamp = data.['date'], open = data.open, high = data.high, low = data.low, close = data.close, volume = data.volume, dividends = data.dividends, stockSplits = data.stockSplits
+| extend Symbol = tostring(Symbol), open = todecimal(open), high = todecimal(high), low = todecimal(low), close = todecimal(close), volume = toint(volume), dividends = todecimal(dividends), stockSplits = tostring(stockSplits)
+| extend fetchTimestamp = unixtime_seconds_todatetime(tolong(fetchTimestamp)), valueTimestamp = unixtime_milliseconds_todatetime(tolong(valueTimestamp))
+| project-away data, StockInfo
+}
+.create-or-alter function with (folder = "Gold", skipvalidation = "true") Stock() {
+  Gold_Stock
+  | project-away valueTimestamp1
+}
+.create-or-alter function with (skipvalidation = "true") StockAge(SymbolStartWith:string) {
+  Stock
+  | where Symbol startswith SymbolStartWith
+  | summarize max(IngestionTime) by Symbol
+  | extend Age = now() - max_IngestionTime
+}
+.create-or-alter function with (folder = "Bronze", skipvalidation = "true") Bronze_Changed_CompanyInfo() {
+let companyCount=toscalar(Silver_Company | count);
+external_table('bronze_company_8')
+| extend companyCount
+| extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update
+| join kind=leftouter Silver_Company on Symbol
+| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))
+| where  BronzeHash <> Hash
+| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash
+}
+.create-or-alter function with (folder = "Power BI", skipvalidation = "true") GetStock(UpperEnd:datetime, WindowSize:string, BinSize:string) {
+  Stock
+  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)
+    //
+    // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)
+    | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol
+    | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  
+    | mv-expand close, volume, valueTimestamp
+    | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)
+    //
+    // Create buckets
+    | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol
+    | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket
+            , Symbol
+            , close                                         // Close of the last valueTimestamp in bucket
+            , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket
+            , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket
+            , minClose
+            , avgClose
+            , maxClose                  
+            , volume                                        // Sum of the volume in the bucket
+    //
+    // Calculate the growth on bucket granularity
+    | partition by Symbol
+    (
+      order by valueTimestamp asc
+      | extend lastClose = prev(close)
+      | extend gain = close - lastClose
+      | extend gainPct = gain/lastClose
+      | extend gainPct100 = round(gainPct * 100,2)
+      | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))
+    )
+}
+.create-or-alter function with (folder = "Gold", skipvalidation = "true") GetStock2(UpperEnd:datetime, WindowSize:string, BinSize:string) {
+  Stock
+  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd) 
+  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)
+  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol
+  | extend close = series_fill_forward(close)  
+  | mv-expand close, volume, valueTimestamp 
+  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)
+  // create bins, based on user request
+  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol
+  | extend binStartClose=close1
+  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume 
+  | order by Symbol, valueTimestamp
+}
+.create-or-alter function with (folder = "Gold", skipvalidation = "true") GetStock3(UpperEnd:datetime, WindowSize:string, BinSize:string) {
+  Stock
+  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd) 
+  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)
+  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol
+  | extend close = series_fill_forward(close)  
+  | mv-expand close, volume, valueTimestamp 
+  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)
+  // create bins, based on user request
+  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol
+  | extend binStartClose=close1
+  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume 
+  | order by Symbol, valueTimestamp
+}
+.create-or-alter materialized-view with (Folder = "Gold")  Gold_Stock on table Silver_Stock { Silver_Stock
+| summarize arg_max(valueTimestamp, *) by Symbol, valueTimestamp }
+.create-or-alter materialized-view with (Folder = "Gold")  Gold_Stock_Symbol on table Silver_Stock { Silver_Stock
+| summarize max(valueTimestamp) by Symbol }
+.create-or-alter materialized-view with (Folder = "Gold")  Company on table Silver_Company { Silver_Company
+//| summarize arg_max(FetchDataTimestamp, *) by ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket
+| summarize arg_max(FetchDataTimestamp, *) by Symbol }
+.alter table Silver_Stock policy update "[{\"IsEnabled\":true,\"Source\":\"Bronze_Stock\",\"Query\":\"Bronze_Parse_StockInfo()\",\"IsTransactional\":true,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"

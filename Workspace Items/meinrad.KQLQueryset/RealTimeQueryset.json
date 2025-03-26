@@ -1,0 +1,100 @@
+{
+  "payload": {
+    "tabs": [
+      {
+        "id": "291c17a1-734a-440b-98b3-ed2d4484e069",
+        "queryRange": {
+          "startLineNumber": 33,
+          "startColumn": 1,
+          "endLineNumber": 66,
+          "endColumn": 35
+        },
+        "text": ".create-or-alter function with (folder = 'Power BI') GetStock (UpperEnd:datetime, WindowSize:string, BinSize:string)\n{\n  Stock\n  | where valueTimestamp between (now() - totimespan(WindowSize) .. UpperEnd)\n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close)  \n  | mv-expand close, volume, valueTimestamp\n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  // create bins, based on user request\n  | summarize  arg_max(valueTimestamp, close), arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | extend binStartClose=close1\n  | project valueTimestamp=valueTimestamp1, Symbol, close, minClose, avgClose, maxClose, binStartClose, volume\n  | order by Symbol, valueTimestamp\n \n \n \n  --> check here\n  | partition by Symbol\n  (\n    order by Symbol, valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n \n}\n\n\n\nlet UpperEnd=datetime('2025-01-13');\nlet WindowSize='15d';\nlet BinSize='4d';\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)             // Check Filter\n| where Symbol =='MSFT'\n//| order by valueTimestamp\n  //\n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n  | mv-expand close, volume, valueTimestamp\n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  //\n  // Create buckets\n  | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n          , Symbol\n          , close                                         // Close of the last valueTimestamp in bucket\n          , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n          , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n          , minClose, avgClose, maxClose                  \n          , volume                                        // Sum of the volume in the bucket\n  // Calculate the growth on bucket granularity\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n| order by Symbol, valueTimestamp ",
+        "commandInContext": "\nlet UpperEnd=datetime('2025-01-13');\nlet WindowSize='15d';\nlet BinSize='4d';\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)             // Check Filter\n| where Symbol =='MSFT'\n//| order by valueTimestamp\n  //\n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n  | mv-expand close, volume, valueTimestamp\n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  //\n  // Create buckets\n  | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n          , Symbol\n          , close                                         // Close of the last valueTimestamp in bucket\n          , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n          , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n          , minClose, avgClose, maxClose                  \n          , volume                                        // Sum of the volume in the bucket\n  // Calculate the growth on bucket granularity\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n| order by Symbol, valueTimestamp ",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.Query;7fcddce7-9a4d-4ede-a437-90c90b7452e1;c18135dd-e65e-4075-ab85-a3b9ff77ef49",
+        "completionInfo": -1957230304,
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "Query",
+        "commandWithoutLeadingComments": "\nlet UpperEnd=datetime('2025-01-13');\nlet WindowSize='15d';\nlet BinSize='4d';\n  Stock\n  | where valueTimestamp between (UpperEnd - totimespan(WindowSize) .. UpperEnd)             // Check Filter\n| where Symbol =='MSFT'\n//| order by valueTimestamp\n  //\n  // Generate a data point for every day and fill it forward (data contain empty spots, e.g. over the weekend)\n  | make-series close = take_any(close) default =real(null), volume = (take_any(volume)) default=int(null) on valueTimestamp step 1d by Symbol\n  | extend close = series_fill_forward(close), volume = series_fill_const(volume,0)  \n  | mv-expand close, volume, valueTimestamp\n  | extend close=toreal(close), volume=toint(volume), valueTimestamp=todatetime(valueTimestamp)\n  //\n  // Create buckets\n  | summarize  arg_max_Ts_close = arg_max(valueTimestamp, close), arg_min_Ts_close = arg_min(valueTimestamp, close), minClose=min(close), avgClose=avg(close), maxClose=max(close), volume = sum(volume) by bin(valueTimestamp, totimespan(BinSize)), Symbol\n  | project valueTimestamp=arg_max_Ts_close               // Last valueTimestamp in bucket\n          , Symbol\n          , close                                         // Close of the last valueTimestamp in bucket\n          , bucketStart_valueTimestamp = arg_min_Ts_close // First valueTimestamp in bucket\n          , bucketStart_close          = close1           // Close of the first valueTimestamp in bucket\n          , minClose, avgClose, maxClose                  \n          , volume                                        // Sum of the volume in the bucket\n  // Calculate the growth on bucket granularity\n  | partition by Symbol\n  (\n    order by valueTimestamp asc\n    | extend lastClose = prev(close)\n    | extend gain = close - lastClose\n    | extend gainPct = gain/lastClose\n    | extend gainPct100 = round(gainPct * 100,2)\n    | extend gainLoss = iif(gain > 0,1,iif(gain<0,-1,0))\n   )\n| order by Symbol, valueTimestamp ",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 66,
+          "column": 35
+        }
+      },
+      {
+        "id": "0edbd79e-6e4b-4d02-81c8-a715ad286b02",
+        "queryRange": {
+          "startLineNumber": 1,
+          "startColumn": 1,
+          "endLineNumber": 26,
+          "endColumn": 60
+        },
+        "text": ".execute database script with (ContinueOnErrors = true) <|\n.drop materialized-view Company\n.execute database script <|\n.drop table Silver_Company ifexists\n.set-or-append Silver_Company with (folder = 'Silver') <|\nexternal_table('bronze_company')\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket\n| extend Hash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\n| where 1 == 2\n//\n.create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\n{\nexternal_table('bronze_company')\n| join kind=leftouter Silver_Company on Symbol\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\n| where  BronzeHash <> Hash\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\n}\n//\n.create-or-alter materialized-view with (folder = 'Gold', backfill = true) Company on table Silver_Company\n{\nSilver_Company\n| summarize arg_max(FetchDataTimestamp, *) by Symbol\n}\n//\n.set-or-append Silver_Company <| Bronze_Changed_CompanyInfo",
+        "commandInContext": ".create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\r\n{\r\nexternal_table('bronze_company')\r\n| join kind=leftouter Silver_Company on Symbol\r\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\r\n| where  BronzeHash <> Hash\r\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\r\n}\r\n",
+        "executionStatus": "notStarted",
+        "clientRequestId": null,
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "AdminCommand",
+        "commandWithoutLeadingComments": ".create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\r\n{\r\nexternal_table('bronze_company')\r\n| join kind=leftouter Silver_Company on Symbol\r\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\r\n| where  BronzeHash <> Hash\r\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\r\n}",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 19,
+          "column": 1
+        }
+      },
+      {
+        "id": "775c0d15-a8e8-4bda-b4c4-ff8a04cb82de",
+        "queryRange": {
+          "startLineNumber": 1,
+          "startColumn": 1,
+          "endLineNumber": 12,
+          "endColumn": 1
+        },
+        "text": ".create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\n{\nlet companyCount=toscalar(Silver_Company | count);\nexternal_table('bronze_company_8')\n| extend companyCount\n| extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update\n| join kind=leftouter Silver_Company on Symbol\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\n| where  BronzeHash <> Hash\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\n}\n",
+        "commandInContext": ".create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\r\n{\r\nlet companyCount=toscalar(Silver_Company | count);\r\nexternal_table('bronze_company_8')\r\n| extend companyCount\r\n| extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update\r\n| join kind=leftouter Silver_Company on Symbol\r\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\r\n| where  BronzeHash <> Hash\r\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\r\n}\r\n",
+        "executionStatus": "done",
+        "clientRequestId": "Kusto.Web.RTA.Query;7fcddce7-9a4d-4ede-a437-90c90b7452e1;ec4a3578-54b3-4015-b192-7e1a3eeb13f3",
+        "completionInfo": -1390209246,
+        "entityInContext": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "commandType": "AdminCommand",
+        "commandWithoutLeadingComments": ".create-or-alter function with (folder = 'Bronze') Bronze_Changed_CompanyInfo()\r\n{\r\nlet companyCount=toscalar(Silver_Company | count);\r\nexternal_table('bronze_company_8')\r\n| extend companyCount\r\n| extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update\r\n| join kind=leftouter Silver_Company on Symbol\r\n| extend BronzeHash = hash(strcat(ShortName, LongName, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, StockMarket))\r\n| where  BronzeHash <> Hash\r\n| project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash\r\n}",
+        "hideEmptyColumns": false,
+        "cursorPosition": {
+          "lineNumber": 1,
+          "column": 1
+        }
+      }
+    ],
+    "tabInContext": "775c0d15-a8e8-4bda-b4c4-ff8a04cb82de",
+    "connections": {
+      "-2092879307": {
+        "clusterType": "Engine",
+        "name": "-2092879307",
+        "connectionString": "",
+        "initialCatalog": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+        "databases": {
+          "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3": {
+            "id": "-2092879307/9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+            "name": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+            "prettyName": "EH_Stocks",
+            "fetchState": "notStarted",
+            "fetchStateError": "",
+            "tables": {},
+            "functions": {},
+            "entityGroups": {},
+            "accessMode": "ReadWrite",
+            "minorVersion": 0,
+            "majorVersion": 9784
+          }
+        },
+        "id": "-2092879307",
+        "fetchState": "done",
+        "fetchStateError": "",
+        "tooBigToCache": true,
+        "serviceOffering": "Trident"
+      }
+    }
+  }
+}

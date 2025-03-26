@@ -1,0 +1,685 @@
+{
+  "schema_version": "54",
+  "title": "StockDemo",
+  "tiles": [
+    {
+      "id": "4fcf54fb-da37-4361-b223-f0fc2fdf2168",
+      "title": "Overview",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "f210e280-c11b-4809-ad50-8c1308ecfff6"
+      },
+      "visualOptions": {
+        "xColumn": "valueTimestamp",
+        "multipleYAxes": {
+          "additional": [],
+          "showMultiplePanels": false,
+          "base": {
+            "horizontalLines": [],
+            "yAxisScale": "linear",
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "columns": [],
+            "label": "",
+            "id": "-1"
+          }
+        },
+        "yColumns": null,
+        "seriesColumns": [
+          "Symbol"
+        ],
+        "anomalyColumns": null
+      }
+    },
+    {
+      "id": "94632398-d025-4f5c-bf0c-573840183e5a",
+      "title": "Show Gaps",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 0,
+        "y": 14,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "69c7e9d4-ba02-4975-bff8-066c018fd14e"
+      },
+      "visualOptions": {
+        "xColumn": "valueTimestamp",
+        "multipleYAxes": {
+          "additional": [],
+          "showMultiplePanels": false,
+          "base": {
+            "horizontalLines": [],
+            "yAxisScale": "linear",
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "columns": [],
+            "label": "",
+            "id": "-1"
+          }
+        },
+        "yColumns": null,
+        "seriesColumns": [
+          "Symbol"
+        ],
+        "anomalyColumns": null
+      }
+    },
+    {
+      "id": "fa916e89-c0ab-408b-aefe-d129894c01a6",
+      "title": "Show Gaps",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 0,
+        "y": 21,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "c5aa3ff6-7312-400a-aafd-8169a0f8e29c"
+      },
+      "visualOptions": {
+        "xColumn": "valueTimestamp",
+        "multipleYAxes": {
+          "additional": [],
+          "showMultiplePanels": false,
+          "base": {
+            "horizontalLines": [],
+            "yAxisScale": "linear",
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "columns": [],
+            "label": "",
+            "id": "-1"
+          }
+        },
+        "yColumns": null,
+        "seriesColumns": [
+          "Symbol"
+        ],
+        "anomalyColumns": null,
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "a8ad549c-abdb-4634-9630-136db2f2cda9",
+      "title": "Show Gaps",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 0,
+        "y": 28,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "afd122b0-f9af-4ff1-afb6-ed9758708f50"
+      },
+      "visualOptions": {
+        "xColumn": "valueTimestamp",
+        "multipleYAxes": {
+          "additional": [],
+          "showMultiplePanels": false,
+          "base": {
+            "horizontalLines": [],
+            "yAxisScale": "linear",
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "columns": [],
+            "label": "",
+            "id": "-1"
+          }
+        },
+        "yColumns": null,
+        "seriesColumns": [
+          "Symbol"
+        ],
+        "anomalyColumns": null,
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "6e4bc67a-c261-4389-b3e8-801d2d1f36d9",
+      "title": "Anomaly Detection",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 9,
+        "y": 0,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "579ad797-a76d-4e34-a780-6d787916daff"
+      },
+      "visualOptions": {
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "label": "",
+            "columns": [],
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": [],
+          "showMultiplePanels": false
+        },
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "1217a75b-41e2-48ca-9138-5084d4e1a2d8",
+      "title": "Last Data Load",
+      "visualType": "table",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 18,
+        "y": 0,
+        "width": 4,
+        "height": 13
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "ae9da9d9-5c1c-4420-8a1d-2fb82048f779"
+      },
+      "visualOptions": {
+        "table__enableRenderLinks": true,
+        "colorRulesDisabled": true,
+        "colorStyle": "light",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [
+          {
+            "interaction": "column",
+            "property": "Symbol",
+            "parameterId": "d060ee97-8459-45d5-9eae-0a93890fbe09",
+            "disabled": false
+          }
+        ],
+        "drillthrough": [],
+        "table__renderLinks": [],
+        "colorRules": []
+      }
+    },
+    {
+      "id": "f68197c8-c8aa-40a2-b9c6-51c8596b384d",
+      "title": "MSFT Detail View",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 9,
+        "y": 7,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "a2f96068-46a6-4a0d-8035-6bd428cf7e90"
+      },
+      "visualOptions": {
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "label": "",
+            "columns": [],
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": [
+            {
+              "id": "d535fec1-5008-4866-b9cf-f9512caade43",
+              "columns": [
+                "gainPct100"
+              ],
+              "label": "",
+              "yAxisMaximumValue": null,
+              "yAxisMinimumValue": null,
+              "yAxisScale": "linear",
+              "horizontalLines": []
+            }
+          ],
+          "showMultiplePanels": false
+        },
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "2efdb1a7-a16d-4d55-bb2f-32bc6942d11d",
+      "title": "MSFT Bin 5d",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 9,
+        "y": 14,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "5c198ee4-06df-45e8-a289-781434eef348"
+      },
+      "visualOptions": {
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "label": "",
+            "columns": [],
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": [
+            {
+              "id": "d535fec1-5008-4866-b9cf-f9512caade43",
+              "columns": [
+                "gainPct100"
+              ],
+              "label": "",
+              "yAxisMaximumValue": null,
+              "yAxisMinimumValue": null,
+              "yAxisScale": "linear",
+              "horizontalLines": []
+            }
+          ],
+          "showMultiplePanels": false
+        },
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "0a65350e-7573-43c7-8a72-4027a7182cba",
+      "title": "MSFT Bin Parameter",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 9,
+        "y": 21,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "6d6803e4-d0e2-4d7a-811c-d39643c2c265"
+      },
+      "visualOptions": {
+        "multipleYAxes": {
+          "base": {
+            "id": "-1",
+            "label": "",
+            "columns": [],
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "yAxisScale": "linear",
+            "horizontalLines": []
+          },
+          "additional": [
+            {
+              "id": "d535fec1-5008-4866-b9cf-f9512caade43",
+              "columns": [
+                "gainPct100"
+              ],
+              "label": "",
+              "yAxisMaximumValue": null,
+              "yAxisMinimumValue": null,
+              "yAxisScale": "linear",
+              "horizontalLines": []
+            }
+          ],
+          "showMultiplePanels": false
+        },
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xColumn": null,
+        "yColumns": null,
+        "seriesColumns": null,
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    },
+    {
+      "id": "fd2339d3-bc1c-42f8-a85a-df134f879f7c",
+      "title": "Overview",
+      "visualType": "line",
+      "pageId": "1df60281-e16c-4224-92ac-9507307255f8",
+      "layout": {
+        "x": 0,
+        "y": 7,
+        "width": 9,
+        "height": 7
+      },
+      "queryRef": {
+        "kind": "query",
+        "queryId": "4867b3a6-a46a-445f-84d0-3c292ad43d28"
+      },
+      "visualOptions": {
+        "xColumn": "valueTimestamp",
+        "multipleYAxes": {
+          "additional": [],
+          "showMultiplePanels": false,
+          "base": {
+            "horizontalLines": [],
+            "yAxisScale": "linear",
+            "yAxisMaximumValue": null,
+            "yAxisMinimumValue": null,
+            "columns": [],
+            "label": "",
+            "id": "-1"
+          }
+        },
+        "yColumns": null,
+        "seriesColumns": [
+          "Symbol"
+        ],
+        "anomalyColumns": null,
+        "hideLegend": false,
+        "legendLocation": "bottom",
+        "xColumnTitle": "",
+        "xAxisScale": "linear",
+        "verticalLine": "",
+        "crossFilterDisabled": false,
+        "drillthroughDisabled": false,
+        "crossFilter": [],
+        "drillthrough": []
+      }
+    }
+  ],
+  "baseQueries": [],
+  "parameters": [
+    {
+      "kind": "string",
+      "id": "1e7fff6b-dc09-41f7-be2f-3c56de248b3a",
+      "displayName": "BinSize",
+      "description": "",
+      "variableName": "_BinSize",
+      "selectionType": "scalar",
+      "includeAllOption": false,
+      "defaultValue": {
+        "kind": "value",
+        "value": "1tick"
+      },
+      "dataSource": {
+        "kind": "static",
+        "values": [
+          {
+            "displayText": "MaxResolution",
+            "value": "1tick"
+          },
+          {
+            "value": "5day"
+          },
+          {
+            "value": "7day"
+          },
+          {
+            "value": "30day"
+          }
+        ]
+      },
+      "showOnPages": {
+        "kind": "all"
+      }
+    },
+    {
+      "kind": "string",
+      "id": "d060ee97-8459-45d5-9eae-0a93890fbe09",
+      "displayName": "StockFilter",
+      "description": "",
+      "variableName": "_StockFilter",
+      "selectionType": "array",
+      "includeAllOption": true,
+      "defaultValue": {
+        "kind": "all"
+      },
+      "dataSource": {
+        "kind": "query",
+        "columns": {
+          "value": "Symbol"
+        },
+        "queryRef": {
+          "kind": "query",
+          "queryId": "a1ece6ba-f462-4964-bbb3-77b1288f2cde"
+        }
+      },
+      "showOnPages": {
+        "kind": "all"
+      }
+    },
+    {
+      "kind": "string",
+      "id": "aa04c4d3-e7ec-463f-940e-6adc4fea366c",
+      "displayName": "MaxTimeWindow",
+      "description": "",
+      "variableName": "_MaxTimeWindow",
+      "selectionType": "scalar",
+      "includeAllOption": false,
+      "defaultValue": {
+        "kind": "value",
+        "value": "1994-01-01"
+      },
+      "dataSource": {
+        "kind": "static",
+        "values": [
+          {
+            "displayText": "All Data",
+            "value": "1994-01-01"
+          },
+          {
+            "value": "2020-01-01"
+          },
+          {
+            "value": "2021-01-01"
+          },
+          {
+            "value": "2022-01-01"
+          },
+          {
+            "value": "2023-01-01"
+          },
+          {
+            "value": "2024-01-01"
+          }
+        ]
+      },
+      "showOnPages": {
+        "kind": "all"
+      }
+    }
+  ],
+  "dataSources": [
+    {
+      "id": "d93abc20-4d97-4e91-903a-5554edc998b9",
+      "kind": "kusto-trident",
+      "scopeId": "kusto-trident",
+      "clusterUri": "",
+      "database": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3",
+      "name": "EH_Stocks",
+      "workspace": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
+  "pages": [
+    {
+      "name": "Page 1",
+      "id": "1df60281-e16c-4224-92ac-9507307255f8"
+    }
+  ],
+  "queries": [
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Stock\n| where Symbol in ('AAPL', 'MSFT', 'ORCL', 'NVDA', 'ABBN.SW', 'GOOG')\n| where valueTimestamp  > datetime(1996-01-01)\n| summarize max(close) by Symbol, bin(valueTimestamp, 30d)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n",
+      "id": "f210e280-c11b-4809-ad50-8c1308ecfff6",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Stock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n//| extend      sValue = series_fill_linear(sValue)\n//| extend      sValue = series_fill_forward(sValue)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)",
+      "id": "69c7e9d4-ba02-4975-bff8-066c018fd14e",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Stock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n| extend      sValue = series_fill_linear(sValue)\n//| extend      sValue = series_fill_forward(sValue)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)",
+      "id": "c5aa3ff6-7312-400a-aafd-8169a0f8e29c",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Stock\n| where Symbol  in ('MSFT')\n| where valueTimestamp  between (datetime(2023-10-26) .. datetime(2023-11-17))\n| make-series sValue = take_any(close) default=real(null) on valueTimestamp step 1d by Symbol\n//| extend      sValue = series_fill_linear(sValue)\n| extend      sValue = series_fill_forward(sValue)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)",
+      "id": "afd122b0-f9af-4ff1-afb6-ed9758708f50",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "range x from 1 to 100 step 1 \n| extend y=iff(x==20 or x==80, 10*rand()+10+(50-x)/2, 10*rand()+10) // series with outliers at x=20 and x=80\n| summarize x=make_list(x),series=make_list(y)\n| extend series_stats(series), outliers=series_outliers(series)\n| mv-expand x to typeof(long), series to typeof(double), outliers to typeof(double)\n| project x, series , outliers_removed=iff(outliers > 1.5 or outliers < -1.5, series_stats_series_avg , series ) \n| render linechart",
+      "id": "579ad797-a76d-4e34-a780-6d787916daff",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Gold_Stock_Symbol\n",
+      "id": "ae9da9d9-5c1c-4420-8a1d-2fb82048f779",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "\nlet symbol='MSFT';\nlet lastLoad = toscalar (Gold_Stock_Symbol | where Symbol == Symbol | summarize max(max_valueTimestamp) | take 1);\nGetStock(lastLoad,'360d','1tick')\n| where Symbol == symbol\n| project Symbol,valueTimestamp,close\n",
+      "id": "a2f96068-46a6-4a0d-8035-6bd428cf7e90",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "\nlet symbol='MSFT';\nlet lastLoad = toscalar (Gold_Stock_Symbol | where Symbol == Symbol | summarize max(max_valueTimestamp) | take 1);\nGetStock(lastLoad,'360d','5d')\n| where Symbol == symbol\n| project Symbol,valueTimestamp,close\n",
+      "id": "5c198ee4-06df-45e8-a289-781434eef348",
+      "usedVariables": []
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "\nlet symbol='MSFT';\nlet lastLoad = toscalar (Gold_Stock_Symbol | where Symbol == Symbol | summarize max(max_valueTimestamp) | take 1);\nGetStock(lastLoad,'360d',_BinSize)\n| where Symbol == symbol\n| project Symbol,valueTimestamp,close\n",
+      "id": "6d6803e4-d0e2-4d7a-811c-d39643c2c265",
+      "usedVariables": [
+        "_BinSize"
+      ]
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Stock\n| where Symbol in (_StockFilter) or isempty( _StockFilter)\n| where valueTimestamp  > todatetime(_MaxTimeWindow)\n| summarize max(close) by Symbol, bin(valueTimestamp, 30d)\n| render linechart with(xcolumn=valueTimestamp, series=Symbol)\n",
+      "id": "4867b3a6-a46a-445f-84d0-3c292ad43d28",
+      "usedVariables": [
+        "_MaxTimeWindow",
+        "_StockFilter"
+      ]
+    },
+    {
+      "dataSource": {
+        "kind": "inline",
+        "dataSourceId": "d93abc20-4d97-4e91-903a-5554edc998b9"
+      },
+      "text": "Gold_Stock_Symbol\n| project Symbol",
+      "id": "a1ece6ba-f462-4964-bbb3-77b1288f2cde",
+      "usedVariables": []
+    }
+  ]
+}

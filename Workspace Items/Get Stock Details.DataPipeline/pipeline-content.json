@@ -296,8 +296,6 @@
         "type": "PBISemanticModelRefresh",
         "typeProperties": {
           "method": "post",
-          "groupId": "9356cf30-1611-4a5c-94b0-f2af55effd60",
-          "datasetId": "6f1412ac-e572-4c0f-b2a8-85ff59bd5d83",
           "commitMode": "Transactional",
           "maxParallelism": 6,
           "objects": [],

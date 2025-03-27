@@ -103,6 +103,8 @@ Once all items have successfully synced, we need to configure a few of them and 
 
 ## Configure all items
 
+### Spark Environment
+
 Let's start with our Spark Environment config by selecting the **ENV_Spark_Stock_Use_Case** item. 
 
 <img src="./PNG/19%20Spark%20Environment.png" width="500">
@@ -114,6 +116,8 @@ In the navigation pane on the left hand side, select **Public Library** and hit 
 Now, hit the **Publish** button at the top right and confirm by selecting **Publish all**. In the confirmation screen hit again **Publish**. This will take a few minutes to process.
 
 <img src="./PNG/21%20Publish%20Spark%20changes.png" width="500">
+
+### Notebooks and Eventhouse
 
 In our next step, we're going to configure our Notebooks. Return to the Workspace overview by selecting the name in the left navigation pane. Select **02 Get Company Details** to open it and select Lakehouses in the Explorer. 
 
@@ -127,14 +131,65 @@ Next, let's add our existing Lakehouse to the Notebook by selecting **+ Lakehous
 
 <img src="./PNG/17%20Add%20Lakehouse%20to%20Notebook.png" width="500">
 
-In the next pop up window, select the LH_Stocks Lakehouse and hit **Add**. Now, let's run the Notebook manually to test if it works. Just hit the Run all button in the ribbon and wait until suceeded. Once finished, let's configure the other Notebook **01 Get Stock Details** by following the same steps to remove all existing Lakehouses connected to the Notebook and add the same Lakehouse to it. 
+In the next pop up window, select the LH_Stocks Lakehouse and hit **Add**. Now, let's run the Notebook manually to test if it works. Just hit the Run all button in the ribbon and wait until suceeded. After the script run successfully, you can refresh the Tables view in the Lakehouse Explorer and see if the **bronze_company** data has been created.
+
+<img src="./PNG/22%20Refresh%20Tables%20in%20Lakehouse.png" width="500">
+
+Once finished, let's configure the other Notebook **01 Get Stock Details** by following the same steps to remove all existing Lakehouses connected to the Notebook and add the same Lakehouse to it. For this Notebook, we need the Eventhouse Cluster URL. For that, we can head back to our Workspace overview and select the **EH_Stocks** KQL Database.
+
+<img src="./PNG/23%20KQL%20Database.png" width="500">
+
+In the next screen, we need to copy the **Query URI**.
+
+<img src="./PNG/24%20Copy%20Query%20URL.png" width="500">
+
+Before we head back to our Notebook to add the Ingestion URI, we want to automatically copy our Tables & Data from our Eventhouse to OneLake. To do so, make sure to select the Kust Database Name and enable the OneLake Availability toggle.
+
+<img src="./PNG/25%20Enable%20OneLake.png" width="500">
+
+Lastly, we also want to create a shortcut in our Eventhouse to our **bronze_company** table sitting in our Lakehouse. To do so, we hit the **+ New** button in the ribbon and select **OneLake shortcut**. 
+
+<img src="./PNG/26%20Eventhouse%20Shortcut%20to%20Lakehouse.png" width="500">
+
+In the next screen, we select **Microsoft OneLake** and choose our **LH_Stocks** Lakehouse. By hitting **Next** we proceed to the next window in which we expand the Tables section and select the **bronze_company** table. By selecting **Next** we get to the overview page in which we just confirm by selecting **Create**. After a few seconds a confirmation screen will appear.
+
+<img src="./PNG/27%20Select%20Bronze%20Company%20Shortcut.png" width="500">
 
 
-[asdf](./PNG/21%20Publish%20Spark%20changes.png)
+Now we go back to the **01 Get Stock Details** Notebook, go to the third cell, and replace the kustoCluster parameter.
+
+<img src="./PNG/28%20Replace%20Kusto%20URL.png" width="500">
+
+Let's test if our Notebook runs successfully by hitting the **Run all** button in the ribbon. After a few seconds, the job will finish and we can check if some data has arrived in our Eventhouse by selecting the Bronze_Stock table.
+
+<img src="./PNG/29%20Check%20Eventhouse%20Data.png" width="500">
+
+### Power BI Report and Semantic Model
+
+Our next step is now to configure the Semantic Model to make sure the Power BI Report will run. For that, we head back to our workspace overview and select the three dots next to the Semantic Model and select **Settings**.
+
+<img src="./PNG/30%20Semantic%20Model%20Settings.png" width="500">
+
+In the **Settings** overview, we expand the Parameters section and replace the **Kusto Cluster URI** with our KQL Database Query URI which we copied a few steps before. We save the change by selecting the **Apply** button.
+
+<img src="./PNG/31%20Replace%20Kusto%20Cluster%20URI%20Parameter.png" width="500">
+
+Next, we edit the data source credentials by expanding the **Data source credentials** menu and select **Edit credentials**. 
+
+<img src="./PNG/32%20Edit%20Sem.%20Model%20Credentials.png" width="500">
+
+Select **Organizational** as Privacy level setting and proceed with **Sign in**.
+
+<img src="./PNG/33%20Set%20Privacy%20level.png" width="500">
+
+Our report is now ready to use. As we haven't configured our pipeline yet to ingest and transform the data as needed, the report is empty. Therefore, let's finish the setup by configuring the two pipelines.
+
+[asdf](./PNG/33%20Set%20Privacy%20level.png)
 
 
+### Pipelines
 
-
+We will start with the **Get Company Details** pipeline by going back to our workspace overview and clicking on the name of the pipeline.
 
 
 

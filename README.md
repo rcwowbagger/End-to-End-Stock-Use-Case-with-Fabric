@@ -96,6 +96,10 @@ After the account has been successfully added, you can select **Connect**. Now, 
 
 Now, all Fabric items from the GitHub repo will be synced into the workspace. This can take a few minutes. You can follow the process at the top right corner.
 
+Once all items have successfully synced, we need to configure a few of them and create two Pipelines to orchestrate and ingest data. 
+
+
+
 
 
 

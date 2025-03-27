@@ -1,0 +1,104 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Lookup",
+        "typeProperties": {
+          "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderStoredProcedureName": "[Core].[GetGetMetadataObjects]",
+            "partitionOption": "None",
+            "queryTimeout": "02:00:00"
+          },
+          "datasetSettings": {
+            "type": "AzureSqlTable",
+            "typeProperties": {
+              "database": "StockMetaData"
+            },
+            "schema": [],
+            "annotations": []
+          },
+          "firstRowOnly": true
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "GetMetaDataObjects",
+        "dependsOn": []
+      },
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "032b2fae-1f76-92b3-4a01-838888790178",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "stocks_string": {
+              "value": {
+                "value": "@activity('GetMetaDataObjects').output.firstRow.SymbolsToGetMetadata",
+                "type": "Expression"
+              },
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Get Company Details",
+        "dependsOn": [
+          {
+            "activity": "GetMetaDataObjects",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "KustoQueryLanguage",
+        "typeProperties": {
+          "command": ".set-or-append Silver_Company <| Bronze_Changed_CompanyInfo()",
+          "commandTimeout": "00:20:00"
+        },
+        "linkedService": {
+          "name": "EH_Stocks",
+          "properties": {
+            "type": "KustoDatabase",
+            "typeProperties": {
+              "endpoint": "https://trd-tshp09829tw6dtfu7t.z1.kusto.fabric.microsoft.com",
+              "workspaceId": "00000000-0000-0000-0000-000000000000",
+              "database": "9ad34a63-46c4-9929-4ecc-d0e6f2b701a3"
+            },
+            "annotations": []
+          },
+          "objectId": "f2b701a3-d0e6-4ecc-9929-46c49ad34a63"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Changed_CompanyInfo",
+        "description": "",
+        "dependsOn": [
+          {
+            "activity": "Get Company Details",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -291,33 +291,6 @@
         "name": "Get_Ticker_List",
         "description": "Get all tickers incl. Watermark",
         "dependsOn": []
-      },
-      {
-        "type": "PBISemanticModelRefresh",
-        "typeProperties": {
-          "method": "post",
-          "commitMode": "Transactional",
-          "maxParallelism": 6,
-          "objects": [],
-          "waitOnCompletion": true,
-          "operationType": "SemanticModelRefresh"
-        },
-        "policy": {
-          "timeout": "0.12:00:00",
-          "retry": 0,
-          "retryIntervalInSeconds": 30,
-          "secureInput": false,
-          "secureOutput": false
-        },
-        "name": "Refresh Use Case Semantic Model",
-        "dependsOn": [
-          {
-            "activity": "ForEach1",
-            "dependencyConditions": [
-              "Succeeded"
-            ]
-          }
-        ]
       }
     ]
   }

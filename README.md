@@ -47,7 +47,7 @@ Next, verfiy your account with one option.
 
 
 ## Let's get started
-Once all prerequisites are met, you can log in to GitHub and access following [GitHub Repo.](https://github.com/KBubalo/Fabric-Event) From there, press the button to create a fork.
+Once all prerequisites are met, you can log in to GitHub and access following [GitHub Repo.](https://github.com/PBI-Guy/End-to-End-Stock-Use-Case-with-Fabric) From there, press the button to create a fork.
 
 <img src="./PNG/05%20Create%20a%20GitHub%20Fork.png" width="500">
 
@@ -68,6 +68,10 @@ Next, you need to provide a Token name, e.g. _Fabric Event_, and give access to 
 
 <img src="./PNG/09%20Token%20repo%20access.png" width="500">
 
+Make ksure to provide Read and Write permissions on Contents.
+
+<img src="./PNG/9.1%20Token%20permission.png" width="500">
+
 Once everything configured, press the **Generate token** button at the bottom of the page. A message will pop up summarizing the configuration. Confirm by pressing the **Generate token** button.
 
 
@@ -82,11 +86,11 @@ As a final step, we need to sync now the GitHub repo with our Workspace. Open Mi
 
 <img src="./PNG/12%20Workspace%20Git%20Integration%20Config.png" width="500">
 
-In the pop-up window, give a Display Name and past your GitHub Personal Access Token which we created before. Hit **Add**.
+In the pop-up window, give a Display Name and past your GitHub Personal Access Token which we created before. Also, provide the GitHub repo URL which has following structure: https://github.com/_YourGitHubUser_/End-to-End-Stock-Use-Case-with-Fabric, e.g. https://github.com/PBI-Guy/End-to-End-Stock-Use-Case-with-Fabric Hit **Add**.
 
 <img src="./PNG/13%20Add%20GitHub%20account.png" width="500">
 
-After the account has been successfully added, you can select **Connect**. Now, you have to provide your repo URL, select the main branch, and add **Fabric to the Git folder**. Lasty, click **Connect and sync**.
+After the account has been successfully added, you can select **Connect**. Now, you have to select the main branch, and add **Workspace Items to the Git folder**. Lasty, click **Connect and sync**.
 
 <img src="./PNG/14%20Configure%20Repo.png" width="500">
 
@@ -95,7 +99,7 @@ Now, all Fabric items from the GitHub repo will be synced into the workspace. Th
 
 
 
-[asdf](./PNG/14%20Configure%20Repo.png)
+[asdf](./PNG/9.1%20Token%20permission.png)
 
 
 

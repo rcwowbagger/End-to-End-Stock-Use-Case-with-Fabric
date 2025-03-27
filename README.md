@@ -82,6 +82,8 @@ Make sure to copy and store the access token securely as you will not be able to
 
 <img src="./PNG/11%20Copy%20Access%20Token.png" width="500">
 
+### Sync GitHub repo with a Fabric workspace
+
 As a final step, we need to sync now the GitHub repo with our Workspace. Open Microsoft Fabric, navigate to your workspace and press the **Workspace settings** at the top right. Now, select Git integration, choose GitHub and press the **Add account** button.
 
 <img src="./PNG/12%20Workspace%20Git%20Integration%20Config.png" width="500">
@@ -99,11 +101,36 @@ Now, all Fabric items from the GitHub repo will be synced into the workspace. Th
 Once all items have successfully synced, we need to configure a few of them and create two Pipelines to orchestrate and ingest data. 
 
 
+## Configure all items
+
+Let's start with our Spark Environment config by selecting the **ENV_Spark_Stock_Use_Case** item. 
+
+<img src="./PNG/19%20Spark%20Environment.png" width="500">
+
+In the navigation pane on the left hand side, select **Public Library** and hit **Add from PyPI**. Search for **yahoo-fin** and make sure the version is at least **0.8.9.1**. Add a new library by selecting the **+ Add from PyPI** button at the top and search for yfinance. Make sure the version is at least **0.2.55**. 
+
+<img src="./PNG/20%20Add%20Public%20Libraries.png" width="500">
+
+Now, hit the **Publish** button at the top right and confirm by selecting **Publish all**. In the confirmation screen hit again **Publish**. This will take a few minutes to process.
+
+<img src="./PNG/21%20Publish%20Spark%20changes.png" width="500">
+
+In our next step, we're going to configure our Notebooks. Return to the Workspace overview by selecting the name in the left navigation pane. Select **02 Get Company Details** to open it and select Lakehouses in the Explorer. 
+
+<img src="./PNG/15%20Select%20Lakehouse.png" width="500">
+
+You'll see a "Missing Lakehouse" followed by a number. Select the two arrows next to it and choose **Remove all lakehouses**. In the pop up window just confirm by hitting the **Continue** button.
+
+<img src="./PNG/16%20Remove%20Missing%20Lakehouse.png" width="500">
+
+Next, let's add our existing Lakehouse to the Notebook by selecting **+ Lakehouses** or the green **Add** button in the explorer. In the pop up window, select **Existing lakehouse(s) without Schema** and continue by pressing the **Add** button.
+
+<img src="./PNG/17%20Add%20Lakehouse%20to%20Notebook.png" width="500">
+
+In the next pop up window, select the LH_Stocks Lakehouse and hit **Add**. Now, let's run the Notebook manually to test if it works. Just hit the Run all button in the ribbon and wait until suceeded. Once finished, let's configure the other Notebook **01 Get Stock Details** by following the same steps to remove all existing Lakehouses connected to the Notebook and add the same Lakehouse to it. 
 
 
-
-
-[asdf](./PNG/9.1%20Token%20permission.png)
+[asdf](./PNG/21%20Publish%20Spark%20changes.png)
 
 
 

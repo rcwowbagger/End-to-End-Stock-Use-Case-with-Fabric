@@ -4,9 +4,9 @@ This GitHub repo contains all necessary items to create the End-to-End Stock Use
 
 <img src="./Documentation/PNG/Slide4.png" width="500">
 
-The full documentation can be found [here](./Documentation/Solution%20Overview/Documentation.md).
+The full documentation can be found [here](./Documentation/Solution%20Overview/README.md).
 <br>
-Please follow the step-by-step guide [here](./Documentation/Step%20by%20step%20guide.md).
+Please follow the step-by-step guide [here](./Documentation/README.md).
 
 ## Prerequisites
 

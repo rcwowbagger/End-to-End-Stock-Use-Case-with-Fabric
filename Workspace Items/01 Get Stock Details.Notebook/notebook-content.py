@@ -114,9 +114,7 @@ countRows = 0
 
 # META {
 # META   "language": "python",
-# META   "language_group": "synapse_pyspark",
-# META   "frozen": false,
-# META   "editable": true
+# META   "language_group": "synapse_pyspark"
 # META }
 
 # CELL ********************

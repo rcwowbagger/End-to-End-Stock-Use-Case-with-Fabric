@@ -268,7 +268,7 @@ Lastly, rename and configure the activity as follow:
 
 The Max parallelism property parallelize the refresh of tables and decrease therefore the refresh time (improving performance) of the Semantic Model. The **Table(s)** property allows us to refresh only a specific table or partition if wished, which is not necessary in our case.
 
-Let's test if the pipeline runs successfully by selecting the **> Run** button in the Ribbon and confirm by selecting **Save and run**. As we're loading now data for multiple tickers for all years until today, this will take a few minutes to complete. In the meantime, we can configure a schedule for the two pipelines. To do so, let's go back to our Workspace overview, select the three dots next to the pipeline, and hit **Schedule**. 
+Let's test if the pipeline runs successfully by selecting the **> Run** button in the Ribbon and confirm by selecting **Save and run**. As we're loading now data for multiple tickers starting from 2020 until today, this will take a few minutes to complete. In the meantime, we can configure a schedule for the two pipelines. To do so, let's go back to our Workspace overview, select the three dots next to the pipeline, and hit **Schedule**. 
 
 <img src="./PNG/50%20Get%20Stock%20Details%20Schedule.png" width="500">
 
@@ -278,3 +278,4 @@ Now, configure the schedule as you wish. For example, on a daily base at 7am sta
 
 Let's see if our job completed successfully by going back to the pipeline and check out the **Output** tab. Once successfully completed, we have finished the setup of the environment! If we open our report, we'll see some data in there.
 
+<img src="./PNG/Slide4.png" width="500">

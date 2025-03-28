@@ -114,6 +114,21 @@ countRows = 0
 
 # META {
 # META   "language": "python",
+# META   "language_group": "synapse_pyspark",
+# META   "frozen": false,
+# META   "editable": true
+# META }
+
+# CELL ********************
+
+def refresh_access_token():
+    # Get Access Token for Kusto
+    return notebookutils.credentials.getToken('kusto')
+
+# METADATA ********************
+
+# META {
+# META   "language": "python",
 # META   "language_group": "synapse_pyspark"
 # META }
 
@@ -171,8 +186,8 @@ if not startDate == endDate:
             df_stock_details_json = pd.DataFrame(json_data)
             df_stock_details_json_spark = spark.createDataFrame(df_stock_details_json)
             
-            #Get Access Token for Kusto
-            accessToken = notebookutils.credentials.getToken('kusto')
+            # Refresh the access token before each write operation
+            accessToken = refresh_access_token()
 
             # Write data to stock table in Eventhouse
             df_stock_details_json_spark.write. \

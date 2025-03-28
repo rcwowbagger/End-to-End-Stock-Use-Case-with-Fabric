@@ -248,17 +248,17 @@ BEGIN
           AS
           BEGIN
               ;WITH TablesToTransferRaw AS (
-                         SELECT ''MSFT''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''GOOG''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''ORCL''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 0 AS Enabled
-              UNION ALL  SELECT ''NVDA''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''AAPL''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''NESN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''NOVN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''ROG.SW''  AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 0 AS Enabled
-              UNION ALL  SELECT ''ABBN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''UBSG.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
-              UNION ALL  SELECT ''SREN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''Yahoo'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
+                         SELECT ''MSFT''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
+              UNION ALL  SELECT ''GOOG''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
+              UNION ALL  SELECT ''ORCL''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 0 AS Enabled
+              UNION ALL  SELECT ''NVDA''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 0 AS Enabled
+              UNION ALL  SELECT ''AAPL''    AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''Dow Jones'' AS Stockmarket, 1 AS Enabled
+              UNION ALL  SELECT ''NESN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 0 AS Enabled
+              UNION ALL  SELECT ''NOVN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
+              UNION ALL  SELECT ''ROG.SW''  AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 0 AS Enabled
+              UNION ALL  SELECT ''ABBN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 0 AS Enabled
+              UNION ALL  SELECT ''UBSG.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 1 AS Enabled
+              UNION ALL  SELECT ''SREN.SW'' AS SourceObjectName, NULL AS Batch, ''Daily'' AS LoadMode, ''YahooFinance'' AS Api, NULL AS WatermarkEH, ''SMI''       AS Stockmarket, 0 AS Enabled
 
               )
               , TablesToTransfer
@@ -270,7 +270,7 @@ BEGIN
                      Api,
                      ''New Definition'' AS LoadStatus,
                      --COALESCE(WatermarkEH, DATEADD(DAY, -20, GETUTCDATE())) AS WatermarkEH,
-                     COALESCE(WatermarkEH, CONVERT(DATETIME, ''19000101'', 112)) AS WatermarkEH,
+                     COALESCE(WatermarkEH, CONVERT(DATETIME, ''20200101'', 112)) AS WatermarkEH,
                      Stockmarket,
                     Enabled
               FROM TablesToTransferRaw

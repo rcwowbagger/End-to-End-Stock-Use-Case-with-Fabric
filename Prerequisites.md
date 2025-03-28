@@ -2,6 +2,12 @@
 
 This GitHub repo contains all necessary items to create the End-to-End Stock Use Case in Microsoft Fabric. 
 
+<img src="./Documentation/PNG/Slide4.png" width="500">
+
+The full documentation can be found [here](./Documentation/Solution%20Overview/Documentation.md).
+<br>
+Please follow the step-by-step guide [here](./Documentation/Step%20by%20step%20guide.md).
+
 ## Prerequisites
 
 To make sure you can use this GitHub repo, a few things are required.
@@ -9,7 +15,7 @@ To make sure you can use this GitHub repo, a few things are required.
 ### 1. You need a Fabric Capacity
 To be able to use this GitHub repo, a Fabric Capacity is required. You can either use a F2+, a Fabric Trial, or Power BI Premium. To activate a trial, you can follow [this link.](https://learn.microsoft.com/en-us/fabric/fundamentals/fabric-trial)
 
-### 2. You need to enablel some Tenant settings
+### 2. You need to enable some Tenant settings
 To make sure you can sync your workspace with GitHub, you need to enable following tenat settings:
 * [Users can create Fabric items](https://learn.microsoft.com/en-us/fabric/admin/fabric-switch)
 * [Users can synchronize workspace items with their Git repositories](https://learn.microsoft.com/en-us/fabric/cicd/git-integration/git-get-started?tabs=github%2CAzure%2Ccommit-to-git)

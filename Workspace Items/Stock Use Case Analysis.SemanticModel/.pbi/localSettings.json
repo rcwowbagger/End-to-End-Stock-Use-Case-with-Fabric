@@ -1,0 +1,13 @@
+{
+  "version": "1.1",
+  "userConsent": {
+    "compositeModel": true,
+    "dynamicQueryParameters": true
+  },
+  "remoteArtifacts": [
+    {
+      "datasetId": "6f1412ac-e572-4c0f-b2a8-85ff59bd5d83"
+    }
+  ],
+  "securityBindingsSignature": "AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAIDhUmgdGrkqwoXxJx6SMXQAAAAACAAAAAAAQZgAAAAEAACAAAABmvv0lFJu1fJn7zxlPR/EM3eyWujkYpHw8TWexs0keaAAAAAAOgAAAAAIAACAAAACwv7lj5vU0VXpwIuN2Hi1rYCg2O4vN7pUbd8HMlXWdeVAAAAD6vbZmXH1cX64KFdF9N0bpn/fYj28/yterpScBhemTPHEMjfLAHwrXJxs4psLwy/E1wEBtLMd1XI2m6lo1GB28SsLqF0wxjS0oTkFDgOWxPEAAAADAeNfmNpYqjRjhci5FK0+v6nz+1Sy40VPyiyEyO+LY5sWjpap+V1b9CAXeM4WN2LQH6VJBhuF9hYF9Q3FXlBFB"
+}

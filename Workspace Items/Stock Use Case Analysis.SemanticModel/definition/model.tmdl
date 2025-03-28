@@ -28,9 +28,11 @@ queryGroup 'Parameter Table'
 
 annotation PBI_QueryOrder = ["dim_Company","dim_Company_Timestamp","fact_GetStock","Kusto Cluster URI","Kusto DB","Param_WindowSize","WindowSize","KPIs","BinSize","Date","Param_BinSize"]
 
-annotation __PBI_TimeIntelligenceEnabled = 1
+annotation __PBI_TimeIntelligenceEnabled = 0
 
-annotation PBIDesktopVersion = 2.139.1527.0 (24.12)+035674a4e3d92cfe08423c703c53fb96dd6195bf
+annotation PBIDesktopVersion = 2.141.1177.0 (25.03)+c500dc5720dc9271c2dcfef1230911a0da742ee3
+
+annotation PBI_ProTooling = ["DevMode"]
 
 ref table dim_Company
 ref table dim_Company_Timestamp
@@ -38,9 +40,7 @@ ref table fact_GetStock
 ref table Param_WindowSize
 ref table KPIs
 ref table Param_BinSize
-ref table DateTableTemplate_4499ba74-3982-4595-80e6-6851978a306c
 ref table Param_Date
-ref table LocalDateTable_46c12e96-078e-418a-8fed-9174c3845aa2
 
 ref cultureInfo en-US
 

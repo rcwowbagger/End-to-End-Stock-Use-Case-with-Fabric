@@ -8,11 +8,6 @@ table Param_Date
 		isNameInferred
 		sourceColumn: [Date]
 
-		variation Variation
-			isDefault
-			relationship: 6b42b8ed-bd03-4581-a0b0-b3bc0d5b570b
-			defaultHierarchy: LocalDateTable_46c12e96-078e-418a-8fed-9174c3845aa2.'Date Hierarchy'
-
 		extendedProperty ParameterMetadata =
 				{
 				  "version": 2,

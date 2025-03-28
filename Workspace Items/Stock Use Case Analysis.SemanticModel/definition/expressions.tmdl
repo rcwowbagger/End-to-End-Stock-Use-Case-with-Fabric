@@ -1,4 +1,4 @@
-expression 'Kusto Cluster URI' = "" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+expression 'Kusto Cluster URI' = "xxx" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
 	lineageTag: e288761e-d893-4c4b-9960-e24a6b22de64
 	queryGroup: 'Environment Parameter'
 

@@ -182,9 +182,48 @@ Select **Organizational** as Privacy level setting and proceed with **Sign in**.
 
 <img src="./PNG/33%20Set%20Privacy%20level.png" width="500">
 
-Our report is now ready to use. As we haven't configured our pipeline yet to ingest and transform the data as needed, the report is empty. Therefore, let's finish the setup by configuring the two pipelines.
+Our report is now ready to use. As we haven't configured our pipeline yet to ingest and transform the data as needed, therefore the report is empty. 
 
-[asdf](./PNG/33%20Set%20Privacy%20level.png)
+### Database
+
+Before configuring our Pipeline, we need to make sure our meta information is stored in a SQL Database. We will create one in Microsoft Fabric to leverage the unified paltform but if you don't see an option to create a SQL DB in Fabric (not all regions are supported at the time of writing this guide), you can also create an Azure DQL Database outside of Fabric and connect to it as workaround. 
+
+If we go back to our workspace overview and select **+ New Item** at the top left, we can search for SQL Database and select it. 
+
+<img src="./PNG/34%20Create%20Fabric%20SQL%20DB.png" width="500">
+
+We're going to call it **SQLDB_StockMetaData** and proceed with the **Create** button.
+
+<img src="./PNG/35%20SQL%20DB%20Naming.png" width="500">
+
+Select **New Query** in the Ribbon and paste [this SQL script](./Documentation/SQL%20Script/Create%20objects%20in%20SQL%20DB.sql) to create all necessary schemas, tables, and stored procedures. 
+
+<img src="./PNG/36%20Execute%20SQL%20Script%20to%20create%20objects.png" width="500">
+
+Lastly, we need to load some initial data. For that, we're going to execute our LoadTransferObject stored procedure and check with a select statement if we see the values in the table. Create a new query, paste the below code and execute it.
+
+```
+EXECUTE [Helper].[LoadTransferObject] 
+GO
+
+SELECT [SourceObjectName]
+      ,[Batch]
+      ,[LoadMode]
+      ,[Api]
+      ,[Stockmarket]
+      ,[LoadStatus]
+      ,[WatermarkEH]
+      ,[Enabled]
+
+FROM [Core].[TransferObject]
+; 
+```
+
+We should see now some data like in the picture below.
+
+<img src="./PNG/37%20Load%20initial%20data.png" width="500">
+
+This is our core table which defines which tickers we're interested in, what the current Watermark is and if it's enabled for loading. If new stock data should be loaded, we have to insert it into this table and everything else will happen automatically once the pipeline runs. So, we're now ready to configure our meta-data driven pipeline.
 
 
 ### Pipelines
@@ -197,6 +236,7 @@ We will start with the **Get Company Details** pipeline by going back to our wor
 
 
 
+[asdf](./PNG/37%20Load%20initial%20data.png)
 
 
 _ThisItalic_

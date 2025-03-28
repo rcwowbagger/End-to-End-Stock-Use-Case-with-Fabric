@@ -148,7 +148,7 @@ We're going to call it **SQLDB_StockMetaData** and proceed with the **Create** b
 
 <img src="./PNG/35%20SQL%20DB%20Naming.png" width="500">
 
-Select **New Query** in the Ribbon and paste [this SQL script](./Documentation/SQL%20Script/Create%20objects%20in%20SQL%20DB.sql) to create all necessary schemas, tables, and stored procedures. 
+Select **New Query** in the Ribbon and paste [this SQL script](./SQL%20Script/Create%20objects%20in%20SQL%20DB.sql) to create all necessary schemas, tables, and stored procedures. 
 
 <img src="./PNG/36%20Execute%20SQL%20Script%20to%20create%20objects.png" width="500">
 

@@ -27,7 +27,7 @@ Bronze_Stock
 }
 .create-or-alter function with (folder = "Bronze", skipvalidation = "true") Bronze_Changed_CompanyInfo() {
 let companyCount=toscalar(Silver_Company | count);
-external_table('bronze_company_8')
+external_table('bronze_company')
 | extend companyCount
 | extend Currency = iff(Symbol == 'MSFT' and companyCount == 0, 'XXX', Currency)  // To simulate update
 | join kind=leftouter Silver_Company on Symbol

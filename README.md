@@ -228,20 +228,103 @@ This is our core table which defines which tickers we're interested in, what the
 
 ### Pipelines
 
-We will start with the **Get Company Details** pipeline by going back to our workspace overview and clicking on the name of the pipeline.
+We will start with the **Get Company Details** pipeline by going back to our workspace overview and clicking on the name of the pipeline. In here, we select the **Lookup** activity, go to **Settings**, select the **Connection** drop down, and hit **More** to create a new connection to our SQL DB.
 
+<img src="./PNG/38%20Configure%20GetMetaDataObjects%20Connection.png" width="500">
 
+In the wizard, we select the **SQLDB_StockMetaData** from the OneLake catalog and a connection will be created.
 
+<img src="./PNG/39%20Select%20SQL%20DB%20from%20OneLake%20Catalog.png" width="500">
 
+Once the connection is established, click on **Stored procedure** in the Use query option and select the **[Core].[GetGetMetadataObjects]** stored procedure.
 
+<img src="./PNG/40%20Lookup%20GetMetaDataObjects%20settings.png" width="500">
 
+We have now successfully configured our Lookup activity and can already run the pipeline. To do so, select the **> Run** button at the top and confirm by selecting **Save and run**.
 
-[asdf](./PNG/37%20Load%20initial%20data.png)
+<img src="./PNG/41%20Save%20and%20Run%20Get%20Company%20Details%20Pipeline.png" width="500">
 
+While the pipeline is running, you can check out the other two activities - Executing the Get Company Details Notebook and the Changed_CompanyInfo KQL statement. In the settings section of each you'll see the connection is already established and the Notebook resp. KQL statement is also there. 
 
-_ThisItalic_
+To make sure our pipeline run successfully and data has been loaded, we can either check the bronze_company table in our Lakehouse, our shortcut in our Eventhouse, or the Silver_Company table which gets loaded by calling the function in our last activity of the pipeline. I'm checking the data in the Eventhouse with following KQL query.
 
-**bold**
+`Silver_Company`
 
+<img src="./PNG/42%20Select%20Silver_Company%20talbe%20in%20EH.png" width="500">
 
-`code` testing code
+Now, let's configure the next pipeline by heading back to our workspace overview and select the **Get Stock Details** pipeline. In there, we select the **Get_Ticker_List** Lookup activity, go to **Settings** and choose our existing FabrcSQL (or Azure SQL if no Fabric SQL DB has been created) connection.
+
+<img src="./PNG/43%20Configure%20Get_Ticker_List%20Lookup%20Connection.png" width="500">
+
+Next, we select the SQL Database **SQLDB_StockMetaData**, choose **Stored procedure** and configure the **[Core].[GetLoadObjects] stored procedure.
+
+<img src="./PNG/44%20Lookup%20Get_Ticker_List%20settings.png" width="500">
+
+As last step, we need to configure the ForeEach loop activity by selecting the pencil icon.
+
+<img src="./PNG/45%20Edit%20ForEach%20loop.png" width="500">
+
+Please make sure to configure following activities as described in the table below. Once the stored procedure is selected, hit the **Import parameter** button to get the parameters automatically. The screen shot below shows the Start Transfer activity.
+
+| Activity | Connection | SQL Database | Use query | Stored Procedure |
+|--------------|----------|--------------|----------|----------|
+| Start Transfer | FabricSql | SQLDB_StockMetaData | Stored procedure | [Core].[StartTransfer] |
+| EHDatabaseLoaded | FabricSql | SQLDB_StockMetaData | Stored procedure | [Core].[EHDatabaseLoaded] |
+| ErrorInTransfer | FabricSql | SQLDB_StockMetaData | Stored procedure | [Core].[ErrorInTransfer] |
+
+<br>
+
+| Activity | Parameter Name | Type | Value |
+|--------------|----------|--------------|----------|
+| Start Transfer | HighWatermark | Datetime | @item().HighWaterMark
+| Start Transfer | PipelineRunId | String | @pipeline().RunId
+| Start Transfer | SourceObjectName | String | @item().SourceObjectName
+| EHDatabaseLoaded | RowsInsertedKQL | Int32 | @activity('Get Stock Details').output.result.exitValue
+| EHDatabaseLoaded | SourceObjectName | String | @item().SourceObjectName
+| EHDatabaseLoaded | StartTime | Datetime | @activity('Start Transfer').output.firstRow.StartTime
+| ErrorInTransfer | ErrorMessage | String | @activity('Get Stock Details').output.result.error.evalue
+| ErrorInTransfer | SourceObjectName | String | @item().SourceObjectName
+| ErrorInTransfer | SparkMonitoringURL | String | @activity('Get Stock Details').output.SparkMonitoringURL
+| ErrorInTransfer | StartTime | Datetime | @activity('Start Transfer').output.firstRow.StartTime
+
+<br>
+
+<img src="./PNG/46%20Start%20Transfer%20Activity%20settings.png" width="500">
+
+In order to minimize the amount of time it takes to execute the notebook job, you could optionally set a session tag. Setting the session tag will instruct Spark to reuse any existing Spark session thereby minimizing the startup time. Any arbitrary string value can be used for the session tag. If no session exists a new one would be created using the tag value. To configure a session tag, select the Notebook activity, go to **Settings**, expand **Advanced settings** and add a session tag.
+
+<img src="./PNG/46%201%20Session%20Tag.png" width="500">
+
+To make sure our pipeline can run multiple Notebooks in high concurrency, we need to enable this setting in the Workspace settings. Go back to the Workspace overview, select **Workspace settings**, expand **Data Engineering/Science**, go to **High concurrency**, and enable **For pipeline running multiple notebooks**. Hit the **Save** button to save the changes.
+
+<img src="./PNG/46%202%20Workspace%20Settings%20Spark.png" width="500">
+
+Before we run our pipeline, we need to add one last action to the pipeline to refresh the Semantic Model because our Date dimension is a calculated table and needs to be processed. Head back to the pipeline and select **Activities** in the Ribbon and choose the **Semantic Model refresh** activity. Position it to the right of the ForEach activity and connect them by drag and dropping the **On success** line.
+
+<img src="./PNG/48%20Add%20Semantic%20Model%20Refresh%20Activity.png" width="500">
+
+Lastly, rename and configure the activity as follow:
+
+| Property | Value |
+|--------------|----------|
+| Name | Refresh Semantic Model |
+| Connection | _Create new Power BI Semantic Model connection_ |
+| Semantic model | Stock Use Case Analysis |
+| Max parallelism | 4 |
+
+<img src="./PNG/49%20Sem.%20Model%20Properties.png" width="500">
+
+The Max parallelism property parallelize the refresh of tables and decrease therefore the refresh time (improving performance) of the Semantic Model. The **Table(s)** property allows us to refresh only a specific table or partition if wished, which is not necessary in our case.
+
+Let's test if the pipeline runs successfully by selecting the **> Run** button in the Ribbon and confirm by selecting **Save and run**. As we're loading now data for multiple tickers for all years until today, this will take a few minutes to complete. In the meantime, we can configure a schedule for the two pipelines. To do so, let's go back to our Workspace overview, select the three dots next to the pipeline, and hit **Schedule**. 
+
+<img src="./PNG/50%20Get%20Stock%20Details%20Schedule.png" width="500">
+
+Now, configure the schedule as you wish. For example, on a daily base at 7am starting from 3rd April 2025 until end of 2030. Confirm with the **Apply** button. Repeat the same steps for the other pipeline to configure a schedule as well.
+
+<img src="./PNG/51%20Schedule%20configuration.png" width="500">
+
+Let's see if our job completed successfully by going back to the pipeline and check out the **Output** tab. Once successfully completed, we have finished the setup of the environment! If we open our report, we'll see some data in there.
+
+<img src="./PNG/49 Sem. Model Properties.png width="500">
+

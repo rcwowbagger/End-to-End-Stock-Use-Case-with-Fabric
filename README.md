@@ -19,7 +19,7 @@ To make sure you can sync your workspace with GitHub, you need to enable followi
 ### 3. You need a Workspace backed up by a Fabric Capacity with admin rights to connect your GitHub repo
 Make sure your Workspace is assigned to a Capacity - Fabric, Premium or Trial.
 
-<img src="./PNG/01%20License%20Mode%20Fabric%20Capacity.png" width="500">
+<img src="./Documentation/PNG/01%20License%20Mode%20Fabric%20Capacity.png" width="500">
 
 Further, make sure you have admin rights on the workspace.
 
@@ -28,8 +28,8 @@ If you don't have a GitHub user already, please follow [this link](https://githu
 
 Sign up using an email, providing a secure password, and a username
 
-<img src="./PNG/02%20Sign%20up%20to%20GitHub.png" width="500">
+<img src="./Documentation/PNG/02%20Sign%20up%20to%20GitHub.png" width="500">
 
 Next, verfiy your account with one option.
 
-<img src="./PNG/03%20Verify%20your%20account.png" width="500">
+<img src="./Documentation/PNG/03%20Verify%20your%20account.png" width="500">

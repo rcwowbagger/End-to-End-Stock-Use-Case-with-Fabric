@@ -33,12 +33,12 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'Core.Tran
 BEGIN
    CREATE TABLE Core.TransferObject (
        SourceObjectName NVARCHAR(255),
-       Batch INT,
+       Batch NVARCHAR(50),
        LoadMode NVARCHAR(50),
        Api NVARCHAR(255),
        Stockmarket NVARCHAR(50),
        LoadStatus NVARCHAR(50),
-       WatermarkEH INT,
+       WatermarkEH DATETIME2,
        Enabled BIT
    );
 END

@@ -2,7 +2,7 @@
 
 This GitHub repo contains all necessary items to create the End-to-End Stock Use Case in Microsoft Fabric. 
 
-<img src="./Documentation/PNG/Slide4.png" width="500">
+<img src="./Documentation/PNG/Slide4.PNG" width="500">
 
 The full documentation can be found [here](./Documentation/Solution%20Overview/README.md).
 <br>

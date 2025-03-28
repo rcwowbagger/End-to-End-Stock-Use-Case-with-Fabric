@@ -278,4 +278,4 @@ Now, configure the schedule as you wish. For example, on a daily base at 7am sta
 
 Let's see if our job completed successfully by going back to the pipeline and check out the **Output** tab. Once successfully completed, we have finished the setup of the environment! If we open our report, we'll see some data in there.
 
-<img src="./PNG/Slide4.png" width="500">
+<img src="./PNG/Slide4.PNG" width="500">

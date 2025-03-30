@@ -50,7 +50,7 @@ import json
 
 # PARAMETERS CELL ********************
 
-stocks_string = '[{"Stockmarket":"dowJones","Symbol":"AAPL,GOOG,MSFT,ORCL"},{"Stockmarket":"SMI","Symbol":"NESN.SW"}]'
+stocks_string = '[{"Stockmarket":"dowJones","Symbol":"MSFT"},{"Stockmarket":"SMI","Symbol":"UBSG.SW"}]'
 
 # METADATA ********************
 

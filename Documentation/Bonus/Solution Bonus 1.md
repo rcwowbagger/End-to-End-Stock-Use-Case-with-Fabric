@@ -1,6 +1,6 @@
-Left join on Company table (Gold) instead of silver_company where  BronzeHash <> Hash should only be tested against the latest record in the company table
+As we're doing a left join on the Silver_Company table, we'll always have a difference as we're not comparing to the newest record from our gold table. Therefore, we need to adjust the left join to our Company table sitting in our gold layer to avoid the error.
 
-```
+```ruby
 let companyCount=toscalar(Silver_Company | count);
 external_table('bronze_company')
 | extend companyCount

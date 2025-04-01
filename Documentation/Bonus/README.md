@@ -8,7 +8,7 @@ The company function to enable SCD in the eventhouse has an error which will add
 
 The body of the function which needs to be adjusted looks like following:
 
-```
+```ruby
 let companyCount=toscalar(Silver_Company | count);
 external_table('bronze_company')
 | extend companyCount
@@ -18,6 +18,8 @@ external_table('bronze_company')
 | where  BronzeHash <> Hash
 | project ShortName, LongName, Symbol, Address, City, Zip, State, Country, Website, Industry, Sector, Currency, LogoURL, FetchDataTimestamp, StockMarket, Hash = BronzeHash
 ```
+
+Find the solution [here](Solution%20Bonus%201.md).
 
 ### Bonus 2
 

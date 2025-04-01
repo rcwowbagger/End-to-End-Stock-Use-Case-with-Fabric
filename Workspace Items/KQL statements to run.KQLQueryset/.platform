@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
   "metadata": {
     "type": "KQLQueryset",
-    "displayName": "Demo Airlift",
-    "description": "Demo Airlift"
+    "displayName": "KQL statements to run",
+    "description": "KQL statements to run"
   },
   "config": {
     "version": "2.0",
-    "logicalId": "0a2228d8-e3c5-80be-4ccc-f5619ab9e48c"
+    "logicalId": "9b2b7056-3c61-a199-4c76-0b05f4a9d53c"
   }
 }

@@ -103,7 +103,7 @@ Lastly, we also want to create a shortcut in our Eventhouse to our **bronze_comp
 
 <img src="./PNG/26%20Eventhouse%20Shortcut%20to%20Lakehouse.png" width="500">
 
-In the next screen, we select **Microsoft OneLake** and choose our **LH_Stocks** Lakehouse. By hitting **Next** we proceed to the next window in which we expand the Tables section and select the **bronze_company** table. By selecting **Next** we get to the overview page in which we just confirm by selecting **Create**. After a few seconds a confirmation screen will appear.
+In the next screen, we select **Microsoft OneLake** and choose our **LH_Stocks** Lakehouse. By hitting **Next** we proceed to the next window in which we expand the Tables section and select the **bronze_company** table. By selecting **Next** we get to the overview page in which we **disable accelerated shortcuts** and confirm by selecting **Create**. After a few seconds a confirmation screen will appear.
 
 <img src="./PNG/27%20Select%20Bronze%20Company%20Shortcut.png" width="500">
 

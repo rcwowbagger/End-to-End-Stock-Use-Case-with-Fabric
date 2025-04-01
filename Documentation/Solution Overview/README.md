@@ -80,9 +80,7 @@ Key concepts in the implementation:
 
 ###  Fabric Pipeline '01 Get Stock Details'
 This pipeline is responsible for getting the stock ticker data from the REST API. It fetches the stock details for a list of companies (list is coming from the SQL database) and stores the data in the Eventhouse. The notebook is fetching the data from the REST API, transforms it into JSON and stores it in the Eventhouse. The JSON format is used to show KQL magic in the Eventhouse. In a real project it is very often the case that the data is coming in JSON format. With this approach we can show how to handle JSON data in KQL. <br> 
- <br>
- The pipeline is implemented in a way that it can be restarted without any data loss. <br>
-
+<br>
 The pipeline is implemented in a way that it can be restarted without any data loss. <br>
 
 Fabric Data Pipelines are used to orchestrate the workflow

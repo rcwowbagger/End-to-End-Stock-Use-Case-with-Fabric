@@ -8,10 +8,8 @@
 # META   },
 # META   "dependencies": {
 # META     "lakehouse": {
-# META       "default_lakehouse": "4f700ffd-2c1f-476a-8bc0-a7d8a739e4fa",
-# META       "default_lakehouse_name": "LH_Stocks",
-# META       "default_lakehouse_workspace_id": "9356cf30-1611-4a5c-94b0-f2af55effd60",
-# META       "known_lakehouses": []
+# META       "default_lakehouse_name": "",
+# META       "default_lakehouse_workspace_id": ""
 # META     },
 # META     "environment": {
 # META       "environmentId": "55ea9b9f-aee3-88a3-4417-95fa1b732c64",
@@ -79,7 +77,8 @@ endDate = '2024-11-15'
 #Define fixed configuration Parameters
 
 #Kusto parameters
-kustoCluster = "https://trd-tshp09829tw6dtfu7t.z1.kusto.fabric.microsoft.com"
+kustoCluster = "https://trd-fxd8hn86fc5ydw5r2g.z1.kusto.fabric.microsoft.com"
+# kustoCluster = "https://trd-tshp09829tw6dtfu7t.z1.kusto.fabric.microsoft.com"
 kustoDatabase = "EH_Stocks"
 kustoTable = "Bronze_Stock"
 
@@ -135,6 +134,8 @@ def refresh_access_token():
 if not startDate == endDate:
 
     stockDetails = yf.Ticker(stock)
+
+    print(stockDetails)
 
     for year in stockDetailYearsList:
         if startYear == year:

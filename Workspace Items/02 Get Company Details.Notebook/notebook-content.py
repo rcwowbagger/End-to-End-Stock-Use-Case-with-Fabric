@@ -8,12 +8,12 @@
 # META   },
 # META   "dependencies": {
 # META     "lakehouse": {
-# META       "default_lakehouse": "4f700ffd-2c1f-476a-8bc0-a7d8a739e4fa",
+# META       "default_lakehouse": "484cd190-235a-42e8-9c57-59fa96268697",
 # META       "default_lakehouse_name": "LH_Stocks",
-# META       "default_lakehouse_workspace_id": "9356cf30-1611-4a5c-94b0-f2af55effd60",
+# META       "default_lakehouse_workspace_id": "6fe94400-e137-4315-a0bc-8f8d615546cc",
 # META       "known_lakehouses": [
 # META         {
-# META           "id": "4f700ffd-2c1f-476a-8bc0-a7d8a739e4fa"
+# META           "id": "484cd190-235a-42e8-9c57-59fa96268697"
 # META         }
 # META       ]
 # META     },

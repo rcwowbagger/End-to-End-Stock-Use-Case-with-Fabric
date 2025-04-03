@@ -1,4 +1,4 @@
 dependencies:
   - pip:
       - yahoo-fin==0.8.9.1
-      - yfinance==0.2.44
+      - yfinance==0.2.55

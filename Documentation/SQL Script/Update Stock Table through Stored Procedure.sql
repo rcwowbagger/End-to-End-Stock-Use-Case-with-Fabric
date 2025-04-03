@@ -1,9 +1,3 @@
-/****** Object:  StoredProcedure [Helper].[LoadTransferObject]    Script Date: 03/04/2025 10:47:04 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER PROCEDURE [Helper].[LoadTransferObject]
           AS
           BEGIN

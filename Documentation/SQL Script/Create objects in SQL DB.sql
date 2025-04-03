@@ -286,7 +286,6 @@ BEGIN
                       target.[LoadMode]            = source.[LoadMode],
                       target.[Api]                 = source.[Api],
                       target.[LoadStatus]          = source.[LoadStatus],
-                      target.[WatermarkEH]         = source.[WatermarkEH],
                       target.[Stockmarket]         = source.[Stockmarket],
                       target.[Enabled]             = source.[Enabled]
                       
